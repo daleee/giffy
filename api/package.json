@@ -1,0 +1,16 @@
+{
+  "name": "giffy-api",
+  "version": "0.0.0",
+  "description": "api for giffy",
+  "main": "server.js",
+  "dependencies": {
+    "restify": "^2.8.1",
+    "s3": "^3.1.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Dale Karp",
+  "license": "MIT"
+}
