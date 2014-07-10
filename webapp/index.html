@@ -1,10 +1,24 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" ng-app>
 <head>
-  <meta charset="UTF-8">
-  <title>Document</title>
+    <title>Giffy</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
 </head>
 <body>
+<header>
+    <h1>Giffy</h1>
+    <h2>That's pronounced 'JIFFY'.</h2>
+</header>
 
+<section class="latest">
+    <h3>Latest GIFs</h3>
+    <p>Put GIFs here.</p>
+</section>
+
+<section class="upload">
+    <p>Drag and drop your .gif anywhere on this page, or
+        <input type="file" accept=".gif" multiple="multiple" id="gifUploadBtn"></p>
+</section>
 </body>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.14/angular.min.js"></script>
 </html>
