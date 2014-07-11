@@ -1,0 +1,8 @@
+var s3ClientConfig = {
+    s3Options: {
+        accessKeyId: '',
+        secretAccessKey: ''
+    }
+};
+
+exports = module.exports = s3ClientConfig;
