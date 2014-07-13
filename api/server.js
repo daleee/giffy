@@ -1,6 +1,7 @@
 var restify = require('restify');
 var s3 = require('s3');
 
+// get config files from ./conf/
 var apiOptions;
 try {
     apiOptions = require('./conf/api');
@@ -18,10 +19,9 @@ try {
     process.exit(1);
 }
 
-var server = restify.createServer();
+// get file names from S3
+var fileNameCache = [];
 var s3_client = s3.createClient(awsOptions.s3ClientConfig);
-
-var fileNames = [];
 var objectLister = s3_client.listObjects(awsOptions.s3ListObjectConfig);
 objectLister.on('error', function(err) {
     console.log('ERROR: There was an issue getting a list of objects from the S3 bucket:');
@@ -29,16 +29,17 @@ objectLister.on('error', function(err) {
 });
 objectLister.on('data', function(data) {
     for(var i = 0; i < data.Contents.length; ++i) {
-        fileNames.push(data.Contents[i].Key);
+        fileNameCache.push(data.Contents[i].Key);
     }
 });
 
-// ROUTE START
+// start server, define routes
+// TODO: move routes to their own files
+var server = restify.createServer();
 server.get('/', function(req, res, next) {
-    res.send(fileNames);
+    res.send(fileNameCache);
     next();
 });
-// ROUTE END
 
 server.listen(apiOptions.port, function() {
     console.log('Server is now online at: %s', server.url);
