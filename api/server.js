@@ -14,19 +14,12 @@ try {
     process.exit(1);
 }
 
-var listParams = {
-    recursive: false,
-    s3Params: {
-        Bucket: 'gifs.dale.io'
-    }
-};
-
 var server = restify.createServer();
 var s3_client = s3.createClient(awsOptions.s3ClientConfig);
 
 var fileNames = [];
 
-var objectLister = s3_client.listObjects(listParams);
+var objectLister = s3_client.listObjects(awsOptions.s3ListObjectConfig);
 objectLister.on('error', function(err) {
     console.log('ERROR: There was an issue getting a list of objects from the S3 bucket:');
     console.log(err);
