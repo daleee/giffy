@@ -1,0 +1,5 @@
+var port = 8080;
+
+exports = module.exports = {
+    port: port
+};
