@@ -7,7 +7,7 @@ var s3 = require('s3');
 
 var s3ClientOptions;
 try {
-    apiOptions = require('./conf/api');
+    awsOptions = require('./conf/aws');
 } catch(e) {
     console.log('ERROR: API configuration is missing!');
     console.log('Please rename conf/api.js.example to conf/api.js and edit the file to your needs.');
@@ -22,7 +22,7 @@ var listParams = {
 };
 
 var server = restify.createServer();
-var s3_client = s3.createClient(apiOptions.s3ClientConfig);
+var s3_client = s3.createClient(awsOptions.s3ClientConfig);
 
 var fileNames = [];
 
