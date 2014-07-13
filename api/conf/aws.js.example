@@ -1,18 +1,9 @@
 var s3ClientConfig = {
-    s3Options: {
-        accessKeyId: '',
-        secretAccessKey: ''
-    }
-};
-
-var s3ListObjectConfig = {
-    recursive: false,
-    s3Params: {
-        Bucket: ''
-    }
+    key: '', // your access key
+    secret: '', // your secret
+    bucket: '' // name of bucket you wish to store gifs in
 };
 
 exports = module.exports = {
-    s3ClientConfig: s3ClientConfig,
-    s3ListObjectConfig: s3ListObjectConfig
+    s3ClientConfig: s3ClientConfig
 };
