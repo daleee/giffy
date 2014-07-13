@@ -1,5 +1,5 @@
 var restify = require('restify');
-var s3 = require('s3');
+var knox = require('knox');
 
 // get config files from ./conf/
 var apiOptions;
@@ -21,13 +21,13 @@ try {
 
 // get file names from S3
 var fileNameCache = [];
-var s3_client = s3.createClient(awsOptions.s3ClientConfig);
-var objectLister = s3_client.listObjects(awsOptions.s3ListObjectConfig);
-objectLister.on('error', function(err) {
-    console.log('ERROR: There was an issue getting a list of objects from the S3 bucket:');
-    console.log(err);
-});
-objectLister.on('data', function(data) {
+var s3Client = knox.createClient(awsOptions.s3ClientConfig);
+s3Client.list({}, function(err, data){
+    if(err) {
+        console.log('ERROR: There was an issue getting a list of objects from the S3 bucket:');
+        console.log(err);
+        return;
+    }
     for(var i = 0; i < data.Contents.length; ++i) {
         fileNameCache.push(data.Contents[i].Key);
     }
