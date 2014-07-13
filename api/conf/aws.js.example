@@ -5,4 +5,14 @@ var s3ClientConfig = {
     }
 };
 
-exports = module.exports = s3ClientConfig;
+var s3ListObjectConfig = {
+    recursive: false,
+    s3Params: {
+        Bucket: ''
+    }
+};
+
+exports = module.exports = {
+    s3ClientConfig: s3ClientConfig,
+    s3ListObjectConfig: s3ListObjectConfig
+};
