@@ -1,3 +1,5 @@
+/* Original version taken form https://github.com/tadruj/s3upload-coffee-javascript
+ * Modified by Dale Karp <dale@dale.io> */
 (function() {
 
   window.S3Upload = (function() {
