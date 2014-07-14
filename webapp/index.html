@@ -13,7 +13,13 @@
     <div ng-controller="IndexCtrl">
         <section class="latest">
             <h3>Latest GIFs</h3>
-            <p>{{ "There are " + getNumOfGifs() + " GIFs uploaded." }}</p>
+            <p>{{ "There are " + numOfGifs + " GIFs uploaded." }}</p>
+            <ul>
+                <li ng-repeat="gif in gifList">
+                    <img src="http://gifs.dale.io/{{gif}}" alt="gif"/>
+                </li>
+
+            </ul>
         </section>
 
         <section class="upload">
