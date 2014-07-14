@@ -1,0 +1,20 @@
+{
+  "name": "giffy-webapp",
+  "version": "0.0.0",
+  "authors": [
+    "Dale Karp <dale@dale.io>"
+  ],
+  "description": "webapp for giffy",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "s3upload": "*"
+  }
+}
