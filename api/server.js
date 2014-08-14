@@ -21,18 +21,7 @@ try {
 }
 
 // get file names from S3
-var fileNameCache = [];
 var s3Client = knox.createClient(awsOptions.s3ClientConfig);
-s3Client.list({}, function(err, data){
-    if(err) {
-        console.log('ERROR: There was an issue getting a list of objects from the S3 bucket:');
-        console.log(err);
-        return;
-    }
-    for(var i = 0; i < data.Contents.length; ++i) {
-        fileNameCache.push(data.Contents[i].Key);
-    }
-});
 
 // start server, define routes
 // TODO: move routes to their own files
@@ -44,10 +33,26 @@ server.use(restify.CORS({
     credentials: true
 }));
 server.get('/', function(req, res, next) {
-    res.send(fileNameCache);
-    next();
+    s3Client.list({}, function(err, data){
+        if(err) {
+            console.log('ERROR: There was an issue getting a list of objects from the S3 bucket:');
+            console.log(err);
+            res.send(err);
+            next();
+        }
+        else { // success!
+            var gifList = [];
+            for(var i = 0; i < data.Contents.length; ++i) {
+                gifList.push({
+                    fileName: data.Contents[i].Key
+                });
+            }
+            res.send(gifList);
+            next();
+        }
+    });
 });
-// taken from https://devcenter.heroku.com/articles/s3-upload-node
+// originally from taken from https://devcenter.heroku.com/articles/s3-upload-node
 server.get('/sign_s3', function(req, res){
     var AWS_ACCESS_KEY = awsOptions.s3ClientConfig.key;
     var AWS_SECRET_KEY = awsOptions.s3ClientConfig.secret;

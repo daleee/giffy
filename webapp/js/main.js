@@ -5,34 +5,44 @@ giffyApp.factory('S3Service', function($http) {
         return $http({method: 'GET', url: 'http://localhost:8080/'});
     }
 
+    function registerGifWithAPI () {
+        // TODO: make api call to register db entry for img
+    }
+
     return {
-        getListOfGifs: getListOfGifs
+        getListOfGifs: getListOfGifs,
+        registerGifWithAPI: registerGifWithAPI
     };
 });
 
 function IndexCtrl($scope, S3Service) {
-    $scope.numOfGifs = 0;
     $scope.gifList = [];
+    $scope.errors = "";
+    $scope.getNumOfGifsWithGrammar = function() {
+        //TODO: enable localization
+        if($scope.gifList.length === 1) {
+            return "There is 1 GIF uploaded.";
+        } else {
+            return "There are " + $scope.gifList.length + " GIFs uploaded.";
+        }
+    };
 
     var gifGetter = S3Service.getListOfGifs();
     gifGetter.
         success(function(data){
-            $scope.numOfGifs = data.length;
+            if($scope.errors) { // clear out any previous errors
+                $scpoe.errors = "";
+            }
             $scope.gifList = data;
         }).
         error(function(data, status, headers,config) {
-            //TODO: remove
-            console.log("ERROR: There was an error asking S3 for funnies: ");
-            console.log(data);
-            console.log(status);
-            console.log(headers);
-            console.log(config);
+            $scope.errors = "ERROR: The API is down! I repeat, the API is down!";
         });
 
     //TODO: turn into directive
     function s3_upload(){
         var s3upload = new S3Upload({
-            file_dom_selector: 'gifUploadBtn',
+            file_dom_selector: 'hiddenFileInput',
             s3_sign_put_url: 'http://localhost:8080/sign_s3',
             onProgress: function(percent, message) {
                 console.log('%s : %s', percent, message);
@@ -48,6 +58,13 @@ function IndexCtrl($scope, S3Service) {
     /*
      * Listen for file selection:
      */
-    var fileEle = document.getElementById('gifUploadBtn');
+    var button = document.getElementById('uploadBtn');
+    var fileEle = document.getElementById('hiddenFileInput');
     fileEle.addEventListener('change', s3_upload);
+    button.addEventListener('click', function(e) {
+        if(fileEle) {
+            e.preventDefault();
+            fileEle.click();
+        }
+    })
 }
