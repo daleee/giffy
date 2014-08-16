@@ -1,3 +1,5 @@
+'use strict';
+
 var giffy = angular.module('giffy', ['ngRoute']);
 
 giffy.config(['$routeProvider',

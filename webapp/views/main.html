@@ -14,8 +14,8 @@
     <p>{{ getNumOfGifsWithGrammar() }}</p>
     <ul>
         <li ng-repeat="gif in gifList">
-            <a href="http://gifs.dale.io/{{gif.fileName}}">
-                <img class="img-thumbnail" width="200" src="http://gifs.dale.io/{{gif.fileName}}" alt="{{gif.fileName}}"/>
+            <a href="{{ gif.url }}">
+                <img class="img-thumbnail" width="200" ng-src="{{ gif.url }}" alt="{{gif.fileName}}"/>
             </a>
         </li>
     </ul>
