@@ -1,0 +1,23 @@
+<div class="jumbotron">
+    <div class="container">
+        <h1>Prepare for funnies.</h1>
+        <p>Giffy is a place where you can find and share GIFs. That's it, really.</p>
+        <p>
+            <button id="uploadBtn" class="btn btn-lg btn-primary">Upload</button>
+            <input id="hiddenFileInput" type="file" accept=".gif">
+        </p>
+    </div>
+</div>
+
+<div class="container">
+    <h2>Latest GIFs</h2>
+    <p>{{ getNumOfGifsWithGrammar() }}</p>
+    <ul>
+        <li ng-repeat="gif in gifList">
+            <a href="http://gifs.dale.io/{{gif.fileName}}">
+                <img class="img-thumbnail" width="200" src="http://gifs.dale.io/{{gif.fileName}}" alt="{{gif.fileName}}"/>
+            </a>
+        </li>
+    </ul>
+    <p id="errors">{{errors}}</p>
+</div>
