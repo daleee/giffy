@@ -20,9 +20,9 @@ try {
     process.exit(1);
 }
 
-// get file names from S3
 var s3Client = knox.createClient(awsOptions.s3ClientConfig);
 
+var baseURL = awsOptions.bucketBaseURL;
 // start server, define routes
 // TODO: move routes to their own files
 var server = restify.createServer();
@@ -44,7 +44,8 @@ server.get('/', function(req, res, next) {
             var gifList = [];
             for(var i = 0; i < data.Contents.length; ++i) {
                 gifList.push({
-                    fileName: data.Contents[i].Key
+                    fileName: data.Contents[i].Key,
+                    url: baseURL + data.Contents[i].Key
                 });
             }
             res.send(gifList);

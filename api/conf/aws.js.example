@@ -4,6 +4,9 @@ var s3ClientConfig = {
     bucket: '' // name of bucket you wish to store gifs in
 };
 
-exports = module.exports = {
-    s3ClientConfig: s3ClientConfig
+var bucketBaseURL = 'http://YOUR_BUCKET_URL/';
+
+module.exports = {
+    s3ClientConfig: s3ClientConfig,
+    bucketBaseURL: bucketBaseURL
 };
