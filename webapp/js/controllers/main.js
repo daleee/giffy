@@ -4,7 +4,8 @@ angular.module('giffy')
     .controller('MainCtrl', function($scope, S3Service) {
         $scope.gifList = [];
         $scope.errors = "";
-        $scope.getNumOfGifsWithGrammar = function() {
+
+        $scope.getNumOfGifs = function() {
             //TODO: enable localization
             if($scope.gifList.length === 1) {
                 return "There is 1 GIF uploaded.";

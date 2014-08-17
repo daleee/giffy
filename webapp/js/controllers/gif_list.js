@@ -1,3 +1,6 @@
-/**
- * Created by dale on 2014-08-16.
- */
+'use strict';
+
+angular.module('giffy')
+    .controller('GifListCtrl', function($scope) {
+
+    });

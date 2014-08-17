@@ -4,12 +4,20 @@ var giffy = angular.module('giffy', ['ngRoute']);
 
 giffy.config(['$routeProvider',
     function($routeProvider) {
-        $routeProvider.
-            when('/', {
+        $routeProvider
+            .when('/', {
                 templateUrl: 'views/main.html',
                 controller: 'MainCtrl'
-            }).
-            otherwise({
+            })
+            .when('/gifs', {
+                templateUrl: 'views/gif_list.html',
+                controller: 'GifListCtrl'
+            })
+            .when('/gifs/:id', {
+                templateUrl: 'views/gif_detail.html',
+                controller: 'GifDetailCtrl'
+            })
+            .otherwise({
                 redirectTo: '/'
             });
     }]);

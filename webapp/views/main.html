@@ -11,13 +11,12 @@
 
 <div class="container">
     <h2>Latest GIFs</h2>
-    <p>{{ getNumOfGifsWithGrammar() }}</p>
+    <p>{{ getNumOfGifs() }}</p>
     <ul>
         <li ng-repeat="gif in gifList">
-            <a href="{{ gif.url }}">
+            <a ng-href="{{ gif.url }}">
                 <img class="img-thumbnail" width="200" ng-src="{{ gif.url }}" alt="{{gif.fileName}}"/>
             </a>
         </li>
     </ul>
-    <p id="errors">{{errors}}</p>
 </div>
