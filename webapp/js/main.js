@@ -21,7 +21,6 @@ giffy.config(['$routeProvider',
                 redirectTo: '/'
             });
     }]);
-
 // TODO: move to own file
 giffy.factory('S3Service', function($http) {
     function getListOfGifs (){

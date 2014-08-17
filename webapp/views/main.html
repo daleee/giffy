@@ -1,22 +1,21 @@
-<div class="jumbotron">
-    <div class="container">
-        <h1>Prepare for funnies.</h1>
-        <p>Giffy is a place where you can find and share GIFs. That's it, really.</p>
-        <p>
-            <button id="uploadBtn" class="btn btn-lg btn-primary">Upload</button>
-            <input id="hiddenFileInput" type="file" accept=".gif">
-        </p>
+<div class="home container">
+    <div class="jumbotron">
+        <div class="container">
+            <h1>Prepare for funnies.</h1>
+            <p>Giffy is a place where you can find and share GIFs. That's it, really.</p>
+            <gif-image-uploader></gif-image-uploader>
+        </div>
     </div>
-</div>
 
-<div class="container">
-    <h2>Latest GIFs</h2>
-    <p>{{ getNumOfGifs() }}</p>
-    <ul>
-        <li ng-repeat="gif in gifList">
-            <a ng-href="{{ gif.url }}">
-                <img class="img-thumbnail" width="200" ng-src="{{ gif.url }}" alt="{{gif.fileName}}"/>
-            </a>
-        </li>
-    </ul>
+    <div>
+        <h2>Latest GIFs</h2>
+        <p>{{ getNumOfGifs() }}</p>
+        <ul class="giflist">
+            <li class="giflist-item" ng-repeat="gif in gifList | limitTo: 5">
+                <a ng-href="{{ gif.url }}">
+                    <img class="img-responsive img-thumbnail" width="200" ng-src="{{ gif.url }}" alt="{{gif.fileName}}"/>
+                </a>
+            </li>
+        </ul>
+    </div>
 </div>
