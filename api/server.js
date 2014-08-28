@@ -56,5 +56,5 @@ require('./routes')(server);
 
 // start server
 server.listen(apiOptions.port, function() {
-    console.log('Server is now online at: %s', server.url);
+    console.log('Giffy API is now online at: %s', server.url);
 });
