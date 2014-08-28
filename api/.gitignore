@@ -1,2 +1,3 @@
 conf/api.js
 conf/aws.js
+conf/db.js
