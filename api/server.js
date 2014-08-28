@@ -30,6 +30,16 @@ try {
 var knex = require('knex')(dbOptions);
 var bookshelf = require('bookshelf')(knex);
 
+// since knex/bookshelf uses connection pool, need to fake a query to check if sql if reachable
+knex.raw('select 1+1 as result')
+    .then(function (result) {
+        // it worked... silent pass!
+    })
+.catch(function (error) {
+        console.log('ERROR: Could not access your database. Check the config and make sure SQL is running!');
+        process.exit(1);
+    });
+
 // intialize S3 stuff
 var s3Client = knox.createClient(awsOptions.s3ClientConfig);
 var baseURL = awsOptions.bucketBaseURL;
@@ -43,55 +53,7 @@ server.use(restify.CORS({
     credentials: true
 }));
 
-server.get('/', function(req, res, next) {
-    s3Client.list({}, function(err, data){
-        if(err) {
-            console.log('ERROR: There was an issue getting a list of objects from the S3 bucket:');
-            console.log(err);
-            res.send(err);
-            next();
-        }
-        else { // success!
-            var gifList = [];
-            for(var i = 0; i < data.Contents.length; ++i) {
-                gifList.push({
-                    fileName: data.Contents[i].Key,
-                    url: baseURL + data.Contents[i].Key
-                });
-            }
-            res.send(gifList);
-            next();
-        }
-    });
-});
-// originally from taken from https://devcenter.heroku.com/articles/s3-upload-node
-server.get('/sign_s3', function(req, res){
-    var AWS_ACCESS_KEY = awsOptions.s3ClientConfig.key;
-    var AWS_SECRET_KEY = awsOptions.s3ClientConfig.secret;
-    var S3_BUCKET = awsOptions.s3ClientConfig.bucket;
-    var object_name = req.query.s3_object_name;
-    var mime_type = req.query.s3_object_type;
-
-    var now = new Date();
-    var expires = Math.ceil((now.getTime() + 10000)/1000); // 10 seconds from now
-    var amz_headers = "x-amz-acl:public-read";
-
-    var put_request = "PUT\n\n"+mime_type+"\n"+expires+"\n"+amz_headers+"\n/"+S3_BUCKET+"/"+object_name;
-
-    var signature = crypto.createHmac('sha1', AWS_SECRET_KEY).update(put_request).digest('base64');
-    signature = encodeURIComponent(signature.trim());
-    signature = signature.replace('%2B','+');
-
-    var url = 'http://'+S3_BUCKET+'.s3.amazonaws.com/'+object_name;
-
-    var credentials = {
-        signed_request: url+"?AWSAccessKeyId="+AWS_ACCESS_KEY+"&Expires="+expires+"&Signature="+signature,
-        url: url
-    };
-    res.write(JSON.stringify(credentials));
-    res.end();
-});
-
+require('./routes')(server);
 
 // start server
 server.listen(apiOptions.port, function() {
