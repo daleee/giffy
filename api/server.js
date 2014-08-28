@@ -3,7 +3,7 @@ var knox = require('knox');
 var crypto = require('crypto');
 
 // get config files from ./conf/
-var apiOptions;
+var apiOptions, awsOptions, dbOptions;
 try {
     apiOptions = require('./conf/api');
 } catch(e) {
@@ -11,7 +11,6 @@ try {
     console.log('Please rename conf/api.js.example to conf/api.js and edit the file to your needs.');
     process.exit(1);
 }
-var awsOptions;
 try {
     awsOptions = require('./conf/aws');
 } catch(e) {
@@ -19,19 +18,31 @@ try {
     console.log('Please rename conf/aws.js.example to conf/aws.js and edit the file to your needs.');
     process.exit(1);
 }
+try {
+    dbOptions = require('./conf/db');
+} catch(e) {
+    console.log('ERROR: DB configuration is missing!');
+    console.log('Please rename conf/db.js.example to conf/db.js and edit the file to your needs.');
+    process.exit(1);
+}
 
+// intialzie DB stuff
+var knex = require('knex')(dbOptions);
+var bookshelf = require('bookshelf')(knex);
+
+// intialize S3 stuff
 var s3Client = knox.createClient(awsOptions.s3ClientConfig);
-
 var baseURL = awsOptions.bucketBaseURL;
+
 // start server, define routes
 // TODO: move routes to their own files
 var server = restify.createServer();
 server.use(restify.queryParser());
 // CORS stuff
-// TODO: set cors to only accept requests from giffy.dale.io
 server.use(restify.CORS({
     credentials: true
 }));
+
 server.get('/', function(req, res, next) {
     s3Client.list({}, function(err, data){
         if(err) {
@@ -82,6 +93,7 @@ server.get('/sign_s3', function(req, res){
 });
 
 
+// start server
 server.listen(apiOptions.port, function() {
     console.log('Server is now online at: %s', server.url);
 });
