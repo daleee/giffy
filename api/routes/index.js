@@ -1,7 +1,22 @@
-module.exports = function(server){
+module.exports = function(server, models){
     "use strict";
     server.get('/', function(req, res, next) {
-        // TODO: Ask SQL for all images & return them
+        new models.Gif().fetchAll()
+            .then(function (gifs) {
+                res.send(gifs.toJSON());
+            })
+            .catch(function (error) {
+                console.log(error);
+                res.send(500, 'There was an error');
+            })
+    });
+
+    server.post('/gifs', function (req, res, next) {
+        var fn = req.params.filename;
+        res.send({
+            filename: fn
+        });
+        next();
     });
 
     // originally from taken from https://devcenter.heroku.com/articles/s3-upload-node
