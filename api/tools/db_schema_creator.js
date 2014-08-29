@@ -24,7 +24,7 @@ knex.raw('select 1+1 as result')
 knex.schema.createTable('gifs', function (table) {
     table.increments();
     table.string('filename', 100);
-    table.timestamp('uploaded_at');
+    table.timestamps();
 }).then(function () {
     console.log('All tables created successfully!');
     knex.destroy();
