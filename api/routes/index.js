@@ -13,10 +13,21 @@ module.exports = function(server, models){
 
     server.post('/gifs', function (req, res, next) {
         var fn = req.params.filename;
-        res.send({
-            filename: fn
-        });
-        next();
+        if(!fn) {
+            res.send('Did not receive filename!');
+            return next();
+        }
+
+        new models.Gif({ filename: fn })
+            .save()
+            .then(function (model) {
+                res.send(model.toJSON());
+            })
+            .catch(function (error) {
+                res.send('ERROR: There was an error saving the new Gif!g model');
+            });
+
+        return next();
     });
 
     // originally from taken from https://devcenter.heroku.com/articles/s3-upload-node
