@@ -23,7 +23,7 @@ knex.raw('select 1+1 as result')
 // create tables
 knex.schema.createTable('gifs', function (table) {
     table.increments();
-    table.string('filename', 100);
+    table.string('url', 100);
     table.timestamps();
 }).then(function () {
     console.log('All tables created successfully!');
