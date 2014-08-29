@@ -19,6 +19,7 @@ angular.module('giffy')
                     $scpoe.errors = "";
                 }
                 $scope.gifList = data;
+                console.log(data);
             })
             .error(function(data, status, headers,config) {
                 $scope.errors = "ERROR: The API is down! I repeat, the API is down!";

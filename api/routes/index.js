@@ -1,4 +1,4 @@
-module.exports = function(server, models){
+module.exports = function(server, crypto, models, awsOptions){
     "use strict";
     server.get('/', function(req, res, next) {
         new models.Gif().fetchAll()
@@ -12,13 +12,13 @@ module.exports = function(server, models){
     });
 
     server.post('/gifs', function (req, res, next) {
-        var fn = req.params.filename;
-        if(!fn) {
-            res.send('Did not receive filename!');
+        var aUrl = req.params.url;
+        if(!aUrl) {
+            res.send('Did not receive url!');
             return next();
         }
 
-        new models.Gif({ filename: fn })
+        new models.Gif({ url: aUrl })
             .save()
             .then(function (model) {
                 res.send(model.toJSON());
@@ -31,12 +31,18 @@ module.exports = function(server, models){
     });
 
     // originally from taken from https://devcenter.heroku.com/articles/s3-upload-node
-    server.get('/sign_s3', function(req, res){
+    server.get('/sign_s3', function(req, res, next){
         var AWS_ACCESS_KEY = awsOptions.s3ClientConfig.key;
         var AWS_SECRET_KEY = awsOptions.s3ClientConfig.secret;
         var S3_BUCKET = awsOptions.s3ClientConfig.bucket;
         var object_name = req.query.s3_object_name;
         var mime_type = req.query.s3_object_type;
+
+        if(!object_name || !mime_type) {
+            res.send(500, "ERROR: Expected object name and mime type to be send as arguments!");
+            res.end();
+            return next();
+        }
 
         var now = new Date();
         var expires = Math.ceil((now.getTime() + 10000)/1000); // 10 seconds from now

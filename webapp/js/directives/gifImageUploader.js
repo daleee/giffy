@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('giffy')
-    .directive('gifImageUploader', function($location){
+    .directive('gifImageUploader', function($location, $http){
         return {
             restrict: 'E',
             replace: 'true',
@@ -44,6 +44,14 @@ angular.module('giffy')
                         scope.uploadInProgress = false;
                         scope.currentUploadPercent = 0;
                     });
+                    $http.post('http://localhost:8080/gifs', {"url" : publuc_url})
+                        .success(function (data, status, headers, config) {
+                            console.log('it worked');
+                        })
+                        .error(function (data, status, headers, config) {
+                            console.log('nope');
+
+                        })
                 };
                 var onUploadError = function(status) {
                     scope.$apply(function() {

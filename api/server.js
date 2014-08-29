@@ -48,12 +48,13 @@ knex.raw('select 1+1 as result')
 // create & configure server
 var server = restify.createServer();
 server.use(restify.bodyParser());
+server.use(restify.queryParser());
 server.use(restify.CORS({
     credentials: true
 }));
 
 var models = require('./models')(bookshelf);
-var routes = require('./routes')(server, models);
+var routes = require('./routes')(server, crypto, models, awsOptions);
 
 // start server
 server.listen(apiOptions.port, function() {
