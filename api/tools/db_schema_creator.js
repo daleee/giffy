@@ -15,32 +15,38 @@ knex.raw('select 1+1 as result')
     .then(function (result) {
         // it worked... silent pass!
     })
-    .catch(function (error) {
+    .catch(function () {
         console.log('ERROR: Could not access your database. Check the config and make sure SQL is running!');
         process.exit(1);
     });
 
 // create tables
-knex.schema.createTable('users', function (table) {
-    table.increments(); // pk / id
-    table.string('username', 20).notNullable().unique();
-    table.string('email', 30).notNullable().unique();
-    table.timestamp('created_at');
-}).then(function () {
-    return knex.schema.createTable('gifs', function (table) {
+knex.schema
+    .createTable('users', function (table) {
+        table.increments(); // pk / id
+        table.string('username', 20).notNullable().unique();
+        table.string('email', 30).notNullable().unique();
+        //TODO: create columns for password/salts
+        table.timestamp('created_at');
+    })
+    .createTable('gifs', function (table) {
         table.increments();
         table.string('url').notNullable().unique();
         table.timestamps();
-    });
-}).then(function () {
-    return knex.schema.createTable('tags', function (table) {
+    })
+    .createTable('tags', function (table) {
         table.increments();
         table.string('name').notNullable().unique();
+    })
+    .createTable('gifs_tags', function (table) {
+        table.integer('gif_id').references('id').inTable('gifs');
+        table.integer('tag_id').references('id').inTable('tags');
+        table.primary(['gif_id', 'tag_id']).unique(['gif_id', 'tag_id']);
+    }).then(function () {
+        console.log('All tables created!');
+        knex.destroy();
+    }).catch(function (error) {
+        console.log('There was an error creating the tables:');
+        console.log(error);
+        knex.destroy();
     });
-}).then(function () {
-    console.log('All tables created!');
-    knex.destroy();
-}).catch(function (error) {
-    console.log('There was an error creating the tables:');
-    console.log(error);
-});
