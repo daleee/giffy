@@ -21,11 +21,26 @@ knex.raw('select 1+1 as result')
     });
 
 // create tables
-knex.schema.createTable('gifs', function (table) {
-    table.increments();
-    table.string('url', 100);
-    table.timestamps();
+knex.schema.createTable('users', function (table) {
+    table.increments(); // pk / id
+    table.string('username', 20).notNullable().unique();
+    table.string('email', 30).notNullable().unique();
+    table.timestamp('created_at');
 }).then(function () {
-    console.log('All tables created successfully!');
+    return knex.schema.createTable('gifs', function (table) {
+        table.increments();
+        table.string('url').notNullable().unique();
+        table.timestamps();
+    });
+}).then(function () {
+    return knex.schema.createTable('tags', function (table) {
+        table.increments();
+        table.string('name').notNullable().unique();
+    });
+}).then(function () {
+    console.log('All tables created!');
     knex.destroy();
+}).catch(function (error) {
+    console.log('There was an error creating the tables:');
+    console.log(error);
 });
