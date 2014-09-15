@@ -24,10 +24,9 @@ knex.raw('select 1+1 as result')
 knex.schema
     .createTable('users', function (table) {
         table.increments(); // pk / id
-        table.string('username', 20).notNullable().unique();
         table.string('email', 30).notNullable().unique();
         //TODO: create columns for password/salts
-        table.timestamp('created_at');
+        table.timestamps();
     })
     .createTable('gifs', function (table) {
         table.increments();
@@ -42,10 +41,17 @@ knex.schema
         table.integer('gif_id').references('id').inTable('gifs');
         table.integer('tag_id').references('id').inTable('tags');
         table.primary(['gif_id', 'tag_id']).unique(['gif_id', 'tag_id']);
-    }).then(function () {
+    })
+    .createTable('favourites', function (table) {
+        table.integer('user_id').references('id').inTable('users');
+        table.integer('gif_id').references('id').inTable('gifs');
+        table.primary(['user_id', 'gif_id']).unique(['user_id', 'gif_id']);
+    })
+    .then(function () {
         console.log('All tables created!');
         knex.destroy();
-    }).catch(function (error) {
+    })
+    .catch(function (error) {
         console.log('There was an error creating the tables:');
         console.log(error);
         knex.destroy();
