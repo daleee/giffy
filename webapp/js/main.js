@@ -13,7 +13,7 @@ giffy.config(['$routeProvider',
                 templateUrl: 'views/gif_list.html',
                 controller: 'GifListCtrl'
             })
-            .when('/gifs/:id', {
+            .when('/gifs/:name', {
                 templateUrl: 'views/gif_detail.html',
                 controller: 'GifDetailCtrl'
             })
@@ -28,8 +28,8 @@ giffy.factory('S3Service', function($http) {
         return $http({method: 'GET', url: 'http://localhost:8080/'});
     }
 
-    function getGif(gifId) {
-        return $http({method: 'GET', url: 'http://localhost:8080/gifs/' + gifId});
+    function getGif(name) {
+        return $http({method: 'GET', url: 'http://localhost:8080/gifs/' + name});
     }
 
     function getLatestGifs (){

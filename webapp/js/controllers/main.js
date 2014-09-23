@@ -12,8 +12,7 @@ angular.module('giffy')
             }
         };
 
-        var gifGetter = S3Service.getListOfGifs();
-        gifGetter
+        S3Service.getListOfGifs()
             .success(function(data){
                 if($scope.errors) { // clear out any previous errors
                     $scpoe.errors = "";

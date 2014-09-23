@@ -21,7 +21,6 @@ angular.module('giffy')
 
                 var onUploadProgress = function(percent, message){
                     scope.$apply(function(){
-                        console.log('%s : %s', percent, message);
                         scope.currentUploadPercent = percent;
                     });
                 };
@@ -34,8 +33,7 @@ angular.module('giffy')
                     //TODO: take hardcoded url out
                     $http.post('http://localhost:8080/gifs', {"url" : public_url, "name" : name})
                         .success(function (data, status, headers, config) {
-                            //TODO: send user to image detail page
-                            console.log(data);
+                            $location.url('/gifs/' + name);
                         })
                         .error(function (data, status, headers, config) {
                             console.log(data);
