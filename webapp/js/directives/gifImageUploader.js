@@ -19,38 +19,26 @@ angular.module('giffy')
                     }
                 };
 
-                var uploadToS3 = function(){
-                    scope.$apply(function() {
-                        scope.uploadInProgress = true;
-                    });
-                    var s3upload = new S3Upload({
-                        file_dom_selector: 'hiddenFileInput',
-                        s3_sign_put_url: 'http://localhost:8080/sign_s3',
-                        onProgress:  onUploadProgress,
-                        onFinishS3Put: onUploadFinish,
-                        onError: onUploadError
-                    });
-                };
                 var onUploadProgress = function(percent, message){
                     scope.$apply(function(){
                         console.log('%s : %s', percent, message);
                         scope.currentUploadPercent = percent;
                     });
                 };
-                var onUploadFinish = function(publuc_url) {
+                var onUploadFinish = function(public_url, name) {
                     scope.$apply(function() {
-                        //TODO: send user to image detail page
                         scope.errors = '';
                         scope.uploadInProgress = false;
                         scope.currentUploadPercent = 0;
                     });
-                    $http.post('http://localhost:8080/gifs', {"url" : publuc_url})
+                    //TODO: take hardcoded url out
+                    $http.post('http://localhost:8080/gifs', {"url" : public_url, "name" : name})
                         .success(function (data, status, headers, config) {
-                            console.log('it worked');
+                            //TODO: send user to image detail page
+                            console.log(data);
                         })
                         .error(function (data, status, headers, config) {
-                            console.log('nope');
-
+                            console.log(data);
                         })
                 };
                 var onUploadError = function(status) {
@@ -61,6 +49,19 @@ angular.module('giffy')
                     });
                 };
 
+                var uploadToS3 = function(){
+                    scope.$apply(function() {
+                        scope.uploadInProgress = true;
+                    });
+                    //TODO: take hardcoded url out
+                    var s3upload = new S3Upload({
+                        file_dom_selector: 'hiddenFileInput',
+                        s3_sign_put_url: 'http://localhost:8080/sign_s3',
+                        onProgress:  onUploadProgress,
+                        onFinishS3Put: onUploadFinish,
+                        onError: onUploadError
+                    });
+                };
                 hiddenFileElement.addEventListener('change', uploadToS3);
             }
         };

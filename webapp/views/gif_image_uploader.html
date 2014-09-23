@@ -5,7 +5,7 @@
     </p>
     <div ng-show="uploadInProgress" class="progress">
         <div class="progress-bar" role="progressbar" aria-valuenow="{{ currentUploadPercent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ currentUploadPercent }}%;">
-            {{ currentUploadPercent}}%
+            <span>{{ currentUploadPercent}}%</span>
         </div>
     </div>
     <div ng-show="errors">

@@ -21,10 +21,16 @@ giffy.config(['$routeProvider',
                 redirectTo: '/'
             });
     }]);
+
 // TODO: move to own file
 giffy.factory('S3Service', function($http) {
     function getListOfGifs (){
         return $http({method: 'GET', url: 'http://localhost:8080/'});
+    }
+
+    function getLatestGifs (){
+        //TODO: implement on server
+        return $http({method: 'GET', url: 'http://localhost:8080/latest'});
     }
 
     function registerGifWithAPI () {
@@ -32,7 +38,6 @@ giffy.factory('S3Service', function($http) {
     }
 
     return {
-        getListOfGifs: getListOfGifs,
-        registerGifWithAPI: registerGifWithAPI
+        getListOfGifs: getListOfGifs
     };
 });

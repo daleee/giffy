@@ -1,5 +1,6 @@
 module.exports = function(server, crypto, models, awsOptions){
     "use strict";
+    var shortid = require('shortid');
     server.get('/', function(req, res, next) {
         new models.Gif().fetchAll()
             .then(function (gifs) {
@@ -13,12 +14,14 @@ module.exports = function(server, crypto, models, awsOptions){
 
     server.post('/gifs', function (req, res, next) {
         var aUrl = req.params.url;
-        if(!aUrl) {
-            res.send('Did not receive url!');
+        var aName = req.params.name;
+        console.log(req.params);
+        if(!aUrl || !aName) {
+            res.send(500, 'Did not receive url or name!');
             return next();
         }
 
-        new models.Gif({ url: aUrl })
+        new models.Gif({ url: aUrl , name: aName })
             .save()
             .then(function (model) {
                 res.send(model.toJSON());
@@ -48,6 +51,9 @@ module.exports = function(server, crypto, models, awsOptions){
         var expires = Math.ceil((now.getTime() + 10000)/1000); // 10 seconds from now
         var amz_headers = "x-amz-acl:public-read";
 
+        //TODO: check db for newName to ensure no duplicates
+        object_name = shortid.generate() + ".gif";
+
         var put_request = "PUT\n\n"+mime_type+"\n"+expires+"\n"+amz_headers+"\n/"+S3_BUCKET+"/"+object_name;
 
         var signature = crypto.createHmac('sha1', AWS_SECRET_KEY).update(put_request).digest('base64');
@@ -58,7 +64,8 @@ module.exports = function(server, crypto, models, awsOptions){
 
         var credentials = {
             signed_request: url+"?AWSAccessKeyId="+AWS_ACCESS_KEY+"&Expires="+expires+"&Signature="+signature,
-            url: url
+            url: url,
+            name: object_name
         };
         res.write(JSON.stringify(credentials));
         res.end();

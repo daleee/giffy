@@ -13,3 +13,17 @@
 #hiddenFileInput {
     display: none;
 }
+
+/* BOOTSTRAP OVERRIDE
+* Used to centre text in progress bar
+*/
+.progress {
+    position: relative;
+}
+
+.progress span {
+    position: absolute;
+    display: block;
+    width: 100%;
+    color: black;
+}

@@ -31,6 +31,7 @@ knex.schema
     .createTable('gifs', function (table) {
         table.increments();
         table.string('url').notNullable().unique();
+        table.string('name').notNullable().unique();
         table.timestamps();
     })
     .createTable('tags', function (table) {
