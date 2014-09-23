@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('giffy')
-    .directive('gifImageUploader', function($location, $http){
+    .directive('gifImageUploader', ['$location', '$http', function($location, $http){
         return {
             restrict: 'E',
             replace: 'true',
@@ -63,4 +63,4 @@ angular.module('giffy')
                 hiddenFileElement.addEventListener('change', uploadToS3);
             }
         };
-    });
+    }]);

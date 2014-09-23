@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('giffy')
-    .controller('MainCtrl', function($scope, $location, S3Service) {
+    .controller('MainCtrl', ['$scope', '$location', 'S3Service', function($scope, $location, S3Service) {
         $scope.gifList = [];
         $scope.getNumOfGifs = function() {
             //TODO: enable localization
@@ -23,4 +23,4 @@ angular.module('giffy')
                 $scope.errors = "ERROR: The API is down! I repeat, the API is down!";
             });
 
-    });
+    }]);
