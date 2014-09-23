@@ -12,6 +12,24 @@ module.exports = function(server, crypto, models, awsOptions){
             })
     });
 
+    server.get('/gifs/:name', function (req, res, next) {
+        var name = req.params.name;
+        if(!name){
+            res.send(500, 'Did not receive name!');
+            return next();
+        }
+        new models.Gif({name: name})
+            .fetch({required: true})
+            .then(function (model) {
+                if(!model){
+                    res.send(500, "Object not found.");
+                    return next();
+                }
+                res.send(model);
+                return next();
+            })
+    });
+
     server.post('/gifs', function (req, res, next) {
         var aUrl = req.params.url;
         var aName = req.params.name;

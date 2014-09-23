@@ -28,6 +28,10 @@ giffy.factory('S3Service', function($http) {
         return $http({method: 'GET', url: 'http://localhost:8080/'});
     }
 
+    function getGif(gifId) {
+        return $http({method: 'GET', url: 'http://localhost:8080/gifs/' + gifId});
+    }
+
     function getLatestGifs (){
         //TODO: implement on server
         return $http({method: 'GET', url: 'http://localhost:8080/latest'});
@@ -38,6 +42,7 @@ giffy.factory('S3Service', function($http) {
     }
 
     return {
-        getListOfGifs: getListOfGifs
+        getListOfGifs: getListOfGifs,
+        getGif: getGif
     };
 });
