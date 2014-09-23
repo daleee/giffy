@@ -12,7 +12,7 @@
         <p>{{ getNumOfGifs() }}</p>
         <ul class="giflist">
             <li class="giflist-item" ng-repeat="gif in gifList | limitTo: 5">
-                <a ng-href="{{ gif.url }}">
+                <a ng-href="/#gifs/{{ gif.name }}">
                     <img class="img-responsive img-thumbnail" width="200" ng-src="{{ gif.url }}" alt="{{gif.fileName}}"/>
                 </a>
             </li>

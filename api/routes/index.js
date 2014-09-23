@@ -52,7 +52,9 @@ module.exports = function(server, crypto, models, awsOptions){
         var amz_headers = "x-amz-acl:public-read";
 
         //TODO: check db for newName to ensure no duplicates
-        object_name = shortid.generate() + ".gif";
+        var cannonical_name = shortid.generate();
+        object_name = cannonical_name + ".gif";
+
 
         var put_request = "PUT\n\n"+mime_type+"\n"+expires+"\n"+amz_headers+"\n/"+S3_BUCKET+"/"+object_name;
 
@@ -65,7 +67,7 @@ module.exports = function(server, crypto, models, awsOptions){
         var credentials = {
             signed_request: url+"?AWSAccessKeyId="+AWS_ACCESS_KEY+"&Expires="+expires+"&Signature="+signature,
             url: url,
-            name: object_name
+            name: cannonical_name
         };
         res.write(JSON.stringify(credentials));
         res.end();
