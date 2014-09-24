@@ -1,4 +1,4 @@
-module.exports = function(server, crypto, models, awsOptions){
+module.exports = function(server, crypto, aws, models, awsOptions){
     "use strict";
     var shortid = require('shortid');
     server.get('/', function(req, res, next) {
@@ -33,7 +33,6 @@ module.exports = function(server, crypto, models, awsOptions){
     server.post('/gifs', function (req, res, next) {
         var aUrl = req.params.url;
         var aName = req.params.name;
-        console.log(req.params);
         if(!aUrl || !aName) {
             res.send(500, 'Did not receive url or name!');
             return next();
@@ -56,38 +55,40 @@ module.exports = function(server, crypto, models, awsOptions){
         var AWS_ACCESS_KEY = awsOptions.s3ClientConfig.key;
         var AWS_SECRET_KEY = awsOptions.s3ClientConfig.secret;
         var S3_BUCKET = awsOptions.s3ClientConfig.bucket;
-        var object_name = req.query.s3_object_name;
-        var mime_type = req.query.s3_object_type;
 
-        if(!object_name || !mime_type) {
-            res.send(500, "ERROR: Expected object name and mime type to be send as arguments!");
-            res.end();
+        var mime_type = req.query.s3_object_type;
+        if(mime_type !== 'image/gif') {
+            res.send(400, "ERROR: Expected a gif, but got a " + mime_type + " instead!");
             return next();
         }
 
-        var now = new Date();
-        var expires = Math.ceil((now.getTime() + 10000)/1000); // 10 seconds from now
-        var amz_headers = "x-amz-acl:public-read";
-
         //TODO: check db for newName to ensure no duplicates
+
         var cannonical_name = shortid.generate();
-        object_name = cannonical_name + ".gif";
+        var object_name = cannonical_name + ".gif";
 
-
-        var put_request = "PUT\n\n"+mime_type+"\n"+expires+"\n"+amz_headers+"\n/"+S3_BUCKET+"/"+object_name;
-
-        var signature = crypto.createHmac('sha1', AWS_SECRET_KEY).update(put_request).digest('base64');
-        signature = encodeURIComponent(signature.trim());
-        signature = signature.replace('%2B','+');
-
-        var url = 'http://'+S3_BUCKET+'.s3.amazonaws.com/'+object_name;
-
-        var credentials = {
-            signed_request: url+"?AWSAccessKeyId="+AWS_ACCESS_KEY+"&Expires="+expires+"&Signature="+signature,
-            url: url,
-            name: cannonical_name
+        aws.config.update({accessKeyId: AWS_ACCESS_KEY, secretAccessKey: AWS_SECRET_KEY});
+        var s3 = new aws.S3();
+        var s3_params = {
+            Bucket: S3_BUCKET,
+            Key: object_name,
+            Expires: 60,
+            ContentType: mime_type,
+            ACL: 'public-read'
         };
-        res.write(JSON.stringify(credentials));
-        res.end();
+        s3.getSignedUrl('putObject', s3_params, function(err, data){
+            if(err){
+                console.log(err);
+            }
+            else{
+                var return_data = {
+                    signed_request: data,
+                    url: 'http://'+S3_BUCKET+'.s3.amazonaws.com/'+object_name,
+                    name: cannonical_name
+                };
+                res.write(JSON.stringify(return_data));
+                res.end();
+            }
+        });
     });
 };

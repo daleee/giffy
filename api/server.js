@@ -1,6 +1,7 @@
 var restify = require('restify');
 var knox = require('knox');
 var crypto = require('crypto');
+var aws = require('aws-sdk');
 
 // get config options from ./conf/*.js
 var apiOptions, awsOptions, dbOptions;
@@ -40,11 +41,6 @@ knex.raw('select 1+1 as result')
         process.exit(1);
     });
 
-// intialize S3 stuff
-// TODO: is it necessary to use this?
-//var s3Client = knox.createClient(awsOptions.s3ClientConfig);
-//var baseURL = awsOptions.bucketBaseURL;
-
 // create & configure server
 var server = restify.createServer();
 server.use(restify.bodyParser());
@@ -54,7 +50,7 @@ server.use(restify.CORS({
 }));
 
 var models = require('./models')(bookshelf);
-var routes = require('./routes')(server, crypto, models, awsOptions);
+var routes = require('./routes')(server, crypto, aws, models, awsOptions);
 
 // start server
 server.listen(apiOptions.port, function() {
