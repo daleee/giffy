@@ -26,4 +26,4 @@ Installation
 
 To Do
 -----
-[ ] Tests!
+- [ ] Tests!
