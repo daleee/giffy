@@ -8,7 +8,13 @@ gulp.task('browser-sync', function () {
     browserSync({
         server: {
             baseDir: './'
-        }
+        },
+        files: [
+            'index.html',
+            'views/*.html',
+            'style/*.css',
+            'js/**/*.js'
+        ]
     });
 });
 
@@ -18,13 +24,5 @@ gulp.task('build', function () {
     //TODO: Concat.
 });
 
-gulp.task('dev', ['browser-sync'], function () {
-    gulp.watch([
-        'index.html',
-        'views/*.html',
-        'style/*.css',
-        'js/**/*.js'
-    ], reload);
-});
-
+gulp.task('dev', ['browser-sync']);
 gulp.task('default', ['build']);
