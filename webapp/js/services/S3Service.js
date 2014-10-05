@@ -21,6 +21,7 @@ angular.module('giffy')
 
         return {
             getListOfGifs: getListOfGifs,
-            getGif: getGif
+            getGif: getGif,
+            getLatestGifs: getLatestGifs
         };
     }]);
