@@ -3,5 +3,7 @@
   "version": "1.0.0",
   "description": "web frontend end for the giffy api",
   "devDependencies": {
+    "browser-sync": "^1.5.2",
+    "gulp": "^3.8.8"
   }
 }
