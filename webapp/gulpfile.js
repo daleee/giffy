@@ -17,10 +17,5 @@ gulp.task('build', function () {
     //TODO: Concat.
 });
 
-gulp.task('dev', ['browser-sync'], function () {
-    console.log('Dev mode active!');
-});
-
-gulp.task('default', ['build'], function () {
-    console.log('Build complete!');
-});
+gulp.task('dev', ['browser-sync']);
+gulp.task('default', ['build']);
