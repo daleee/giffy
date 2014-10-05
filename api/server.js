@@ -1,7 +1,7 @@
 var restify = require('restify');
-var knox = require('knox');
 var crypto = require('crypto');
 var aws = require('aws-sdk');
+var shortid = require('shortid');
 
 // get config options from ./conf/*.js
 var apiOptions, awsOptions, dbOptions;
@@ -49,8 +49,16 @@ server.use(restify.CORS({
     credentials: true
 }));
 
+var deps = {
+    crypto: crypto,
+    aws: aws,
+    shortid: shortid,
+    bookshelf: bookshelf,
+    server: server
+}
+
 var models = require('./models')(bookshelf);
-var routes = require('./routes')(server, crypto, aws, models, awsOptions);
+var routes = require('./routes')(deps, models, awsOptions);
 
 // start server
 server.listen(apiOptions.port, function () {

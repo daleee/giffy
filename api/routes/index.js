@@ -1,6 +1,12 @@
-module.exports = function(server, crypto, aws, models, awsOptions){
-    "use strict";
-    var shortid = require('shortid');
+"use strict";
+
+module.exports = function(deps, models, awsOptions){
+    var server = deps.server,
+        crypto = deps.crypto,
+        aws = deps.aws,
+        shortid = deps.shortid,
+        bookshelf = deps.bookshelf;
+
     server.get('/', function(req, res, next) {
         new models.Gif().fetchAll()
             .then(function (gifs) {
@@ -9,7 +15,22 @@ module.exports = function(server, crypto, aws, models, awsOptions){
             .catch(function (error) {
                 console.log(error);
                 res.send(500, 'There was an error');
+            });
+    });
+
+    server.get('/latest', function(req, res, next) {
+        bookshelf.knex
+            .select('*')
+            .from('gifs')
+            .limit(5)
+            .then(function (gifs) {
+                console.log(gifs);
+                res.send(gifs);
             })
+            .catch(function (error) {
+                console.log(error);
+                res.send(500, 'There was an error');
+            });
     });
 
     server.get('/gifs/:name', function (req, res, next) {
@@ -27,7 +48,7 @@ module.exports = function(server, crypto, aws, models, awsOptions){
                 }
                 res.send(model);
                 return next();
-            })
+            });
     });
 
     server.post('/gifs', function (req, res, next) {
