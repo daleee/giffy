@@ -22,6 +22,7 @@ module.exports = function(deps, models, awsOptions){
         bookshelf.knex
             .select('*')
             .from('gifs')
+            .orderBy('created_at', 'desc')
             .limit(5)
             .then(function (gifs) {
                 console.log(gifs);
