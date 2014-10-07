@@ -9,6 +9,30 @@
     padding-left: 1em;
 }
 
+/* views/gif_detail.html */
+.share-box input:disabled {
+    cursor: default;
+}
+
+.tag-list-box {
+    margin-bottom: 10px;
+}
+
+.tag-list li {
+    display: inline-block;
+}
+
+.delete-tag-link {
+    color: #CCC;
+    margin-left: 9px;
+}
+
+.delete-tag-link:hover {
+    cursor: pointer;
+    color: #CCC;
+    text-decoration: none;
+}
+
 /* directive: uploader for s3 */
 #hiddenFileInput {
     display: none;
