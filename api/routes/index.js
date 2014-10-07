@@ -13,8 +13,7 @@ module.exports = function(deps, models, awsOptions){
                 res.send(gifs.toJSON());
             })
             .catch(function (error) {
-                console.log(error);
-                res.send(500, 'There was an error');
+                res.send(500, error);
             });
     });
 
@@ -25,12 +24,10 @@ module.exports = function(deps, models, awsOptions){
             .orderBy('created_at', 'desc')
             .limit(5)
             .then(function (gifs) {
-                console.log(gifs);
                 res.send(gifs);
             })
             .catch(function (error) {
-                console.log(error);
-                res.send(500, 'There was an error');
+                res.send(500, error);
             });
     });
 
@@ -100,7 +97,7 @@ module.exports = function(deps, models, awsOptions){
         };
         s3.getSignedUrl('putObject', s3_params, function(err, data){
             if(err){
-                console.log(err);
+                res.send(500, err)
             }
             else{
                 var return_data = {
