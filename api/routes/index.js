@@ -1,6 +1,6 @@
-"use strict";
-
 module.exports = function(deps, models, awsOptions){
+    "use strict";
+
     var server = deps.server,
         crypto = deps.crypto,
         aws = deps.aws,
@@ -43,7 +43,6 @@ module.exports = function(deps, models, awsOptions){
                 withRelated: ['tags']
             })
             .then(function (model) {
-                console.log(model);
                 if(!model){
                     res.send(500, "Object not found.");
                     return next();
