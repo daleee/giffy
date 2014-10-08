@@ -38,8 +38,12 @@ module.exports = function(deps, models, awsOptions){
             return next();
         }
         new models.Gif({name: name})
-            .fetch({required: true})
+            .fetch({
+                required: true,
+                withRelated: ['tags']
+            })
             .then(function (model) {
+                console.log(model);
                 if(!model){
                     res.send(500, "Object not found.");
                     return next();
