@@ -3,7 +3,7 @@ module.exports = function tagModel(bookshelf){
 
     var Tag = bookshelf.Model.extend({
         tableName: 'tags',
-        hasTimestamps: true
+        hasTimestamps: true,
     });
 
     return Tag;
