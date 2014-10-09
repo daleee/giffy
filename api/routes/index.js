@@ -39,7 +39,6 @@ module.exports = function(deps, models, awsOptions){
         }
         new models.Gif({name: name})
             .fetch({
-                required: true,
                 withRelated: ['tags']
             })
             .then(function (model) {
@@ -52,15 +51,45 @@ module.exports = function(deps, models, awsOptions){
             });
     });
 
+    server.post('/gifs/:name/tag', function (req, res, next) {
+        var name = req.params.name;
+        var tag = req.params.tag;
+        if(!name || !tag) {
+            res.send(500, 'Did not recieve name or tag array!');
+            return next();
+        }
+
+        models.Gif.forge({name: name})
+            .fetch({require: true})
+            .then(function (gif) {
+                return models.Tag.forge({name: tag}).fetch().then(function (model) {
+                    if(!model) {
+                        return gif.tags().create({name: tag});
+                    }
+                    else {
+                        return model;
+                    }
+                });
+            })
+            .then(function (tag) {
+                res.send(tag);
+                return next();
+            })
+            .catch(function (err) {
+                res.send(500, err);
+                return next();
+            });
+    });
+
     server.post('/gifs', function (req, res, next) {
-        var aUrl = req.params.url;
-        var aName = req.params.name;
-        if(!aUrl || !aName) {
+        var url = req.params.url;
+        var name = req.params.name;
+        if(!url || !name) {
             res.send(500, 'Did not receive url or name!');
             return next();
         }
 
-        new models.Gif({ url: aUrl , name: aName })
+        new models.Gif({ url: url , name: name })
             .save()
             .then(function (model) {
                 res.send(model.toJSON());
