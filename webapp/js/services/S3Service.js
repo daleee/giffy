@@ -20,7 +20,7 @@ angular.module('giffy')
         }
 
         function removeTagFromGif(gif_name, tag_id) {
-            return $http.delete('http://localhost:8080/gifs/' + gif_name + '/tag', {tag: tag_id});
+            return $http.delete('http://localhost:8080/gifs/' + gif_name + '/tag/' + tag_id);
         }
 
         function registerGifWithAPI () {

@@ -18,8 +18,11 @@ angular.module('giffy')
             if(!tag_id) return;
             S3Service.removeTagFromGif($routeParams.name, tag_id)
                 .success(function (data) {
-                    console.log('wooo!');
-                    $scope.tags = data;
+                    $scope.tags.map(function (currentVal, index, array) {
+                        if(currentVal.id === tag_id) {
+                            $scope.tags.splice(index, 1);
+                        }
+                    });
                 })
                 .error(function (data, status, headers, config) {
                     //TODO: error stuff here too

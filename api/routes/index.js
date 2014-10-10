@@ -32,7 +32,6 @@ module.exports = function(deps, models, awsOptions){
     });
 
     server.get('/gifs/:name', function (req, res, next) {
-        console.log(req.headers);
         var name = req.params.name;
         if(!name){
             res.send(500, 'Did not receive name!');
@@ -68,6 +67,7 @@ module.exports = function(deps, models, awsOptions){
                         return gif.tags().create({name: tag});
                     }
                     else {
+                        gif.tags().attach(model)
                         return model;
                     }
                 });
@@ -80,6 +80,34 @@ module.exports = function(deps, models, awsOptions){
                 res.send(500, err);
                 return next();
             });
+    });
+
+    server.del('/gifs/:name/tag/:tag_id', function (req, res, next) {
+        var name = req.params.name;
+        var tag_id = req.params.tag_id;
+        if(!name || !tag_id) {
+            res.send(500, 'Did not receive GIF id or tag id!');
+            return next();
+        }
+
+        // can't figure out how to remove models from collections using join tables
+        // with bookshelf, so using knex to do it
+        models.Gif.forge({name: name})
+            .fetch({require: true})
+            .then(function (gif) {
+                return bookshelf.knex('gifs_tags')
+                    .where({gif_id: gif.id, tag_id: tag_id})
+                    .del();
+            })
+            .then(function (tag_id) {
+                res.send(200, tag_id);
+                return next();
+            })
+            .catch(function (err) {
+                res.send(500, err);
+                return next();
+
+            })
     });
 
     server.post('/gifs', function (req, res, next) {
