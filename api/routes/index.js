@@ -32,6 +32,7 @@ module.exports = function(deps, models, awsOptions){
     });
 
     server.get('/gifs/:name', function (req, res, next) {
+        console.log(req.headers);
         var name = req.params.name;
         if(!name){
             res.send(500, 'Did not receive name!');

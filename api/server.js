@@ -45,9 +45,21 @@ knex.raw('select 1+1 as result')
 var server = restify.createServer();
 server.use(restify.bodyParser());
 server.use(restify.queryParser());
-server.use(restify.CORS({
-    credentials: true
-}));
+//server.use(restify.CORS());
+server.pre(function corsMiddleware(req, res, next) {
+    //TODO: change to final url/make configurable for peoples
+    res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'content-type');
+    return next();
+});
+server.opts(/\.*/, function (req, res, next) {
+    res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'content-type');
+    res.send(200);
+    return next();
+});
 
 var deps = {
     crypto: crypto,
