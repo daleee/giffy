@@ -2,9 +2,9 @@
 
 angular.module('giffy')
     .controller('GifDetailCtrl', ['$scope', '$routeParams', 'S3Service', function($scope, $routeParams, S3Service) {
-        $scope.addTag = function (tag_name) {
-            if(!tag_name) return; //TODO: show error saying 'pls give name'
-            S3Service.addTagToGif($routeParams.name, tag_name)
+        $scope.addTag = function () {
+            if(!$scope.tag_name) return; //TODO: show error saying 'pls give name'
+            S3Service.addTagToGif($routeParams.name, $scope.tag_name)
                 .success(function (data) {
                     $scope.tags.push(data);
                     $scope.tag_name = '';
@@ -33,6 +33,7 @@ angular.module('giffy')
             .success(function (data) {
                 $scope.url = data.url;
                 $scope.tags = data.tags;
+                $scope.giffyUrl = window.location.href;
             })
             .error(function(data, status, headers,config) {
                 //TODO: show error on page

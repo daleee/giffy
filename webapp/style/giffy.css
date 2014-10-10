@@ -34,6 +34,14 @@
     text-decoration: none;
 }
 
+.sharebox {
+    margin-bottom: 9px;
+}
+
+.the-gif {
+    margin-top: 20px;
+}
+
 /* directive: uploader for s3 */
 #hiddenFileInput {
     display: none;
