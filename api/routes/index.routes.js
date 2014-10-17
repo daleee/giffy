@@ -5,6 +5,7 @@ module.exports = function(deps, models, awsOptions){
         crypto = deps.crypto,
         aws = deps.aws,
         shortid = deps.shortid,
+        passport = deps.passport,
         bookshelf = deps.bookshelf;
 
     server.get('/', function(req, res, next) {
@@ -124,11 +125,22 @@ module.exports = function(deps, models, awsOptions){
                 res.send(model.toJSON());
             })
             .catch(function (error) {
-                res.send('ERROR: There was an error saving the new Gif!g model');
+                res.send('ERROR: There was an error saving the new Gif model');
             });
 
         return next();
     });
+
+
+    // user stuff
+    server.post('/login',
+        passport.authenticate('local'),
+        function (req, res) {
+            console.log('sup');
+
+
+        }
+    );
 
     // originally from taken from https://devcenter.heroku.com/articles/s3-upload-node
     server.get('/sign_s3', function(req, res, next){

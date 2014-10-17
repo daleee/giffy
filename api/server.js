@@ -1,7 +1,8 @@
-var restify = require('restify');
-var crypto = require('crypto');
-var aws = require('aws-sdk');
-var shortid = require('shortid');
+var restify = require('restify'),
+    crypto = require('crypto'),
+    aws = require('aws-sdk'),
+    passport = require('passport'),
+    shortid = require('shortid');
 
 // get config options from ./conf/*.js
 var apiOptions, awsOptions, dbOptions;
@@ -66,11 +67,12 @@ var deps = {
     aws: aws,
     shortid: shortid,
     bookshelf: bookshelf,
+    passport: passport,
     server: server
 }
 
 var models = require('./models')(bookshelf);
-var routes = require('./routes')(deps, models, awsOptions);
+var routes = require('./routes/index.routes.js')(deps, models, awsOptions);
 
 // start server
 server.listen(apiOptions.port, function () {
