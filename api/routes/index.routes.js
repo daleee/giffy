@@ -121,13 +121,11 @@ module.exports = function(deps, models, awsOptions){
 
     // user stuff
     server.post('/user', function (req, res, next) {
-        var email = req.params.email,
-            pass = req.params.pass;
-
-        console.log(email);
+        var email = req.body.email,
+            pass = req.body.pass;
 
         if(!email || !pass) {
-            res.status(500).end();
+            res.status(500).send('ERROR: Did not receive email or password.');
             return;
         }
         var hash = bcrypt.hashSync(pass, 8);
@@ -135,20 +133,17 @@ module.exports = function(deps, models, awsOptions){
             .save()
             .then(function (model) {
                 res.send(model.omit('hash'));
-                return next();
             })
             .catch(function (error) {
                 res.send(400, 'ERROR: This user already exists.');
-                return next();
             })
     });
 
     server.post('/login',
-        passport.authenticate('local', {
-            successRedirect: '/',
-            failureRedirect: '/login',
-            failureFlash: false
-        })
+        passport.authenticate('local'),
+        function (req, res, next) {
+            res.status(200).end();
+        }
     );
 
     // originally from taken from https://devcenter.heroku.com/articles/s3-upload-node
