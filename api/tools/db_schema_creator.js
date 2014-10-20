@@ -25,7 +25,7 @@ knex.schema
     .createTable('users', function (table) {
         table.increments(); // pk / id
         table.string('email', 30).notNullable().unique();
-        //TODO: create columns for password/salts
+        table.string('hash').notNullable().unique();
         table.timestamps();
     })
     .createTable('gifs', function (table) {

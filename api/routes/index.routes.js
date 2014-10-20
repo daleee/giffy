@@ -6,6 +6,7 @@ module.exports = function(deps, models, awsOptions){
         aws = deps.aws,
         shortid = deps.shortid,
         passport = deps.passport,
+        bcrypt = deps.bcrypt,
         bookshelf = deps.bookshelf;
 
     server.get('/', function(req, res, next) {
@@ -133,13 +134,29 @@ module.exports = function(deps, models, awsOptions){
 
 
     // user stuff
+    server.post('/user', function (req, res, next) {
+        var email = req.params.email,
+            pass = req.params.pass;
+
+        var hash = bcrypt.hashSync(pass, 8);
+        models.User.forge({email: email, hash: hash})
+            .save()
+            .then(function (model) {
+                res.send(model.omit('hash'));
+                return next();
+            })
+            .catch(function (error) {
+                res.send(400, 'ERROR: This user already exists.');
+                return next();
+            })
+    });
+
     server.post('/login',
-        passport.authenticate('local'),
-        function (req, res) {
-            console.log('sup');
-
-
-        }
+        passport.authenticate('local', {
+            successRedirect: '/',
+            failureRedirect: '/login',
+            failureFlash: false
+        })
     );
 
     // originally from taken from https://devcenter.heroku.com/articles/s3-upload-node
