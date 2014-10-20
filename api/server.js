@@ -1,5 +1,7 @@
-var restify = require('restify'),
-    crypto = require('crypto'),
+var express = require('express'),
+    session = require('express-session'),
+    bodyParser = require('body-parser'),
+    cors = require('cors'),
     aws = require('aws-sdk'),
     passport = require('passport'),
     bluebird = require('bluebird'),
@@ -45,42 +47,39 @@ knex.raw('select 1+1 as result')
     });
 
 // create & configure server
-var server = restify.createServer();
-server.use(restify.bodyParser());
-server.use(restify.queryParser());
-//server.use(restify.CORS());
-server.pre(function corsMiddleware(req, res, next) {
-    //TODO: change to final url/make configurable for peoples
-    res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
-    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'content-type');
-    return next();
-});
-server.opts(/\.*/, function (req, res, next) {
-    res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
-    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'content-type');
-    res.send(200);
-    return next();
-});
-
+var server = express();
+server.disable('x-powered-by'); // no need to send this header
+server.use(bodyParser.json());
+server.use(session(
+    {
+        secret: 'supdawg',
+        resave: true,
+        saveUninitialized: true
+    }
+));
+server.use(passport.initialize());
+server.use(passport.session());
+server.use(cors());
 
 var deps = {
-    crypto: crypto,
-    aws: aws,
-    shortid: shortid,
-    bookshelf: bookshelf,
+    server: server,
     passport: passport,
-    bcrypt: bcrypt,
+    cors: cors,
+    aws: aws,
+    bookshelf: bookshelf,
     bluebird: bluebird,
-    server: server
-}
+    shortid: shortid,
+    bcrypt: bcrypt
+};
 
 var models = require('./models')(bookshelf);
 var passportConfig = require('./conf/passport.js')(deps, models);
 var routes = require('./routes/index.routes.js')(deps, models, awsOptions);
 
 // start server
-server.listen(apiOptions.port, function () {
-    console.log('Giffy API is now online at: %s', server.url);
+var onlineServer = server.listen(apiOptions.port, function () {
+    console.log('Giffy API is now online at: http://%s:%s',
+        onlineServer.address().address,
+        onlineServer.address().port
+    );
 });

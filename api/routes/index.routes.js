@@ -2,15 +2,18 @@ module.exports = function(deps, models, awsOptions){
     "use strict";
 
     var server = deps.server,
-        crypto = deps.crypto,
+        cors = deps.cors,
         aws = deps.aws,
         shortid = deps.shortid,
         passport = deps.passport,
         bcrypt = deps.bcrypt,
         bookshelf = deps.bookshelf;
 
+
+    server.options('*', cors());
     server.get('/', function(req, res, next) {
-        new models.Gif().fetchAll()
+        models.Gif
+            .fetchAll()
             .then(function (gifs) {
                 res.send(gifs.toJSON());
             })
@@ -33,91 +36,76 @@ module.exports = function(deps, models, awsOptions){
             });
     });
 
-    server.get('/gifs/:name', function (req, res, next) {
-        var name = req.params.name;
-        if(!name){
-            res.send(500, 'Did not receive name!');
-            return next();
-        }
-        new models.Gif({name: name})
+    server.param('gif', function (req, res, next, gif_name) {
+        models.Gif.forge({name: gif_name})
             .fetch({
-                withRelated: ['tags']
+                withRelated: ['tags'],
+                require: true
             })
-            .then(function (model) {
-                if(!model){
-                    res.send(500, "Object not found.");
-                    return next();
-                }
-                res.send(model);
-                return next();
-            });
-    });
-
-    server.post('/gifs/:name/tag', function (req, res, next) {
-        var name = req.params.name;
-        var tag = req.params.tag;
-        if(!name || !tag) {
-            res.send(500, 'Did not recieve name or tag array!');
-            return next();
-        }
-
-        models.Gif.forge({name: name})
-            .fetch({require: true})
             .then(function (gif) {
-                return models.Tag.forge({name: tag}).fetch().then(function (model) {
-                    if(!model) {
-                        return gif.tags().create({name: tag});
-                    }
-                    else {
-                        gif.tags().attach(model)
-                        return model;
-                    }
-                });
+                req.gif = gif;
+                next();
             })
-            .then(function (tag) {
-                res.send(tag);
-                return next();
-            })
-            .catch(function (err) {
-                res.send(500, err);
-                return next();
+            .catch(function () {
+                res.send(404, 'ERROR: GIF not found!');
+                next();
             });
     });
 
-    server.del('/gifs/:name/tag/:tag_id', function (req, res, next) {
-        var name = req.params.name;
-        var tag_id = req.params.tag_id;
-        if(!name || !tag_id) {
-            res.send(500, 'Did not receive GIF id or tag id!');
-            return next();
+    server.get('/gifs/:gif', function (req, res, next) {
+        res.send(req.gif);
+    });
+
+    server.post('/gifs/:gif/tag', function (req, res, next) {
+        var tag = req.body.tag,
+            gif = req.gif;
+
+        console.log(tag);
+        if(!tag){
+            res.status(400).send('ERROR: Did not a tag!');
+            return;
         }
 
+        models.Tag.forge({name: tag}).fetch().then(function (model) {
+            if(!model) {
+                return gif.tags().create({name: tag});
+            }
+            else {
+                gif.tags().attach(model);
+                return model;
+            }
+        })
+        .then(function (tag) {
+            res.send(tag);
+        })
+        .catch(function (err) {
+            res.status(500).send(err);
+        });
+    });
+
+    server.delete('/gifs/:gif/tag/:tag_id', function (req, res, next) {
+        var gif = req.gif,
+            tag_id = req.params.tag_id;
         // can't figure out how to remove models from collections using join tables
         // with bookshelf, so using knex to do it
-        models.Gif.forge({name: name})
-            .fetch({require: true})
-            .then(function (gif) {
-                return bookshelf.knex('gifs_tags')
-                    .where({gif_id: gif.id, tag_id: tag_id})
-                    .del();
-            })
-            .then(function (tag_id) {
-                res.send(200, tag_id);
-                return next();
+        bookshelf.knex('gifs_tags')
+            .where({gif_id: gif.id, tag_id: tag_id})
+            .del()
+            .then(function () {
+                res.send(tag_id);
             })
             .catch(function (err) {
-                res.send(500, err);
-                return next();
-
-            })
+                res.status(500).send(err);
+            });
     });
 
     server.post('/gifs', function (req, res, next) {
-        var url = req.params.url;
-        var name = req.params.name;
+        var url = req.body.url,
+            name = req.body.name;
+
         if(!url || !name) {
-            res.send(500, 'Did not receive url or name!');
-            return next();
+            res.status(400).send('ERROR: Did not receive GIF url or name.');
+            return;
         }
 
         new models.Gif({ url: url , name: name })
@@ -126,10 +114,8 @@ module.exports = function(deps, models, awsOptions){
                 res.send(model.toJSON());
             })
             .catch(function (error) {
-                res.send('ERROR: There was an error saving the new Gif model');
+                res.status(500).send('ERROR: There was an error saving the new Gif model.')
             });
-
-        return next();
     });
 
 
@@ -138,6 +124,12 @@ module.exports = function(deps, models, awsOptions){
         var email = req.params.email,
             pass = req.params.pass;
 
+        console.log(email);
+
+        if(!email || !pass) {
+            res.status(500).end();
+            return;
+        }
         var hash = bcrypt.hashSync(pass, 8);
         models.User.forge({email: email, hash: hash})
             .save()
