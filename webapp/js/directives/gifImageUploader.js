@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('giffy')
-    .directive('gifImageUploader', ['$location', '$http', function($location, $http){
+    .directive('gifImageUploader', ['$location', '$http', 'CONFIG', function($location, $http, CONFIG){
         return {
             restrict: 'E',
             replace: 'true',
@@ -30,8 +30,8 @@ angular.module('giffy')
                         scope.uploadInProgress = false;
                         scope.currentUploadPercent = 0;
                     });
-                    //TODO: take hardcoded url out
-                    $http.post('http://localhost:8080/gifs', {"url" : public_url, "name" : name})
+                    //TODO: move to S3Service (rename to ImageService?)
+                    $http.post(CONFIG.apiEndpoint + '/gifs', {"url" : public_url, "name" : name})
                         .success(function (data, status, headers, config) {
                             $location.url('/gifs/' + name);
                         })
@@ -54,7 +54,7 @@ angular.module('giffy')
                     //TODO: take hardcoded url out
                     var s3upload = new S3Upload({
                         file_dom_selector: 'hiddenFileInput',
-                        s3_sign_put_url: 'http://localhost:8080/sign_s3',
+                        s3_sign_put_url: CONFIG.apiEndpoint + '/sign_s3',
                         onProgress:  onUploadProgress,
                         onFinishS3Put: onUploadFinish,
                         onError: onUploadError
