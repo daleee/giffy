@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('giffy')
-.controller('ApplicationController',['$scope', 'AuthService', function ($scope, AuthService) {
+.controller('ApplicationController',['$scope', '$location', 'AuthService', function ($scope, $location, AuthService) {
         $scope.currentUser = null;
 
         $scope.setCurrentUser = function (user) {
@@ -12,7 +12,8 @@ angular.module('giffy')
             AuthService
                 .logout()
                 .then(function () {
-                    console.log('done');
+                    $scope.setCurrentUser(null);
+                    $location.path('/');
                 });
         }
     }]

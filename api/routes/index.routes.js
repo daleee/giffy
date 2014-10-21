@@ -142,6 +142,7 @@ module.exports = function(deps, models, awsOptions){
     server.post('/login',
         passport.authenticate('local'),
         function (req, res, next) {
+            console.log(req.session);
             res.status(200).send(req.user);
         }
     );

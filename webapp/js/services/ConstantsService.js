@@ -7,5 +7,6 @@ angular.module('giffy')
     .constant('AUTH_EVENTS',
     {
         loginSuccess: 'auth-login-success',
-        loginFailure: 'auth-login-failure'
+        loginFailure: 'auth-login-failure',
+        logoutSuccess: 'auth-logout-success'
     });
