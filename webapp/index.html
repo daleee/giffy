@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html ng-app="giffy" lang="en">
 <head>
     <title>Giffy</title>
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
@@ -8,21 +8,35 @@
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="style/giffy.css">
 </head>
-<body ng-app="giffy">
+<body ng-controller="ApplicationController">
 <div class="navbar navbar-inverse">
     <div class="container">
         <div class="navbar-header">
-            <a class="navbar-brand" href="#">Giffy</a>
+            <a class="navbar-brand" href="/#/">Giffy</a>
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li class="active">
-                    <a href="#">Home</a>
+                    <a href="/#/">Home</a>
                 </li>
                 <li>
                     <a href="#gifs">GIFs</a>
                 </li>
             </ul>
+            <div class="navbar-right" ng-if="currentUser">
+                <p class="navbar-text">Welcome, {{ currentUser.email }}</p>
+                <button ng-click="logOut()" class="btn btn-default navbar-btn">Log out</button>
+            </div>
+            <div ng-if="!currentUser">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="#login">Log in</a>
+                    </li>
+                    <li>
+                        <a href="#signup">Create an account</a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
@@ -36,13 +50,16 @@
 <script src="lib/s3upload.js"></script>
 <!-- app -->
 <script src="js/main.js"></script>
+<script src="js/services/ConstantsService.js"></script>
 <script src="js/services/S3Service.js"></script>
 <script src="js/services/AuthService.js"></script>
+<script src="js/services/SessionService.js"></script>
 <script src="js/directives/gifImageUploader.js"></script>
-<script src="js/controllers/main.js"></script>
-<script src="js/controllers/gif_list.js"></script>
-<script src="js/controllers/gif_detail.js"></script>
-<script src="js/controllers/signup.js"></script>
-<script src="js/controllers/login.js"></script>
+<script src="js/controllers/ApplicationController.js"></script>
+<script src="js/controllers/MainCtrl.js"></script>
+<script src="js/controllers/GifListCtrl.js"></script>
+<script src="js/controllers/GifDetailCtrl.js"></script>
+<script src="js/controllers/SignUpCtrl.js"></script>
+<script src="js/controllers/LoginCtrl.js"></script>
 </body>
 </html>

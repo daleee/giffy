@@ -142,9 +142,14 @@ module.exports = function(deps, models, awsOptions){
     server.post('/login',
         passport.authenticate('local'),
         function (req, res, next) {
-            res.status(200).end();
+            res.status(200).send(req.user);
         }
     );
+
+    server.get('/logout', function(req, res){
+        req.logout();
+        res.status(200).end();
+    });
 
     // originally from taken from https://devcenter.heroku.com/articles/s3-upload-node
     server.get('/sign_s3', function(req, res, next){

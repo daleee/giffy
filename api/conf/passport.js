@@ -12,7 +12,7 @@ module.exports = function passportConfig(deps, models) {
                 var hash = model.get('hash');
                 bcrypt.compare(password, hash, function (err, res) {
                     if(res === true) {
-                        return done(null, model.toJSON());
+                        return done(null, model.omit('hash'));
                     }
                     else {
                         return done(null, false);
