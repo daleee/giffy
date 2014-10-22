@@ -56,11 +56,12 @@ module.exports = function(deps, models, awsOptions){
         res.send(req.gif);
     });
 
-    server.post('/gifs/:gif/tag', function (req, res, next) {
+    server.post('/gifs/:gif/tag',
+        passport.authenticate('local'),
+        function (req, res, next) {
         var tag = req.body.tag,
             gif = req.gif;
 
-        console.log(tag);
         if(!tag){
             res.status(400).send('ERROR: Did not a tag!');
             return;
@@ -83,7 +84,9 @@ module.exports = function(deps, models, awsOptions){
         });
     });
 
-    server.delete('/gifs/:gif/tag/:tag_id', function (req, res, next) {
+    server.delete('/gifs/:gif/tag/:tag_id',
+        passport.authenticate('local'),
+        function (req, res, next) {
         var gif = req.gif,
             tag_id = req.params.tag_id;
         // can't figure out how to remove models from collections using join tables
@@ -99,7 +102,9 @@ module.exports = function(deps, models, awsOptions){
             });
     });
 
-    server.post('/gifs', function (req, res, next) {
+    server.post('/gifs',
+        passport.authenticate('local'),
+        function (req, res, next) {
         var url = req.body.url,
             name = req.body.name;
 

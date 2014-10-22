@@ -16,7 +16,6 @@ module.exports = function passportConfig(deps, models) {
                     }
                     else {
                         return done(null, false);
-
                     }
                 });
             })
@@ -28,7 +27,7 @@ module.exports = function passportConfig(deps, models) {
     passport.use(new LocalStrategy(verifyCallback));
 
     passport.serializeUser(function (user, done) {
-        done(null, user.id);
+        done(null, user);
     });
     passport.deserializeUser(function (id, done) {
         User.forge({'id': id})
