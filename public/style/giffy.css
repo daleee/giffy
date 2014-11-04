@@ -1,0 +1,62 @@
+/* views/main.html */
+.giflist {
+    list-style: none;
+    padding: 0;
+}
+
+.giflist-item {
+    display: inline-block;
+    padding-left: 1em;
+}
+
+/* views/gif_detail.html */
+.share-box input:disabled {
+    cursor: default;
+}
+
+.tag-list-box {
+    margin-bottom: 10px;
+}
+
+.tag-list li {
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.delete-tag-link {
+    color: #CCC;
+    margin-left: 9px;
+}
+
+.delete-tag-link:hover {
+    cursor: pointer;
+    color: #CCC;
+    text-decoration: none;
+}
+
+.sharebox {
+    margin-bottom: 9px;
+}
+
+.the-gif {
+    margin-top: 20px;
+}
+
+/* directive: uploader for s3 */
+#hiddenFileInput {
+    display: none;
+}
+
+/* BOOTSTRAP OVERRIDE
+* Used to centre text in progress bar
+*/
+.progress {
+    position: relative;
+}
+
+.progress span {
+    position: absolute;
+    display: block;
+    width: 100%;
+    color: black;
+}

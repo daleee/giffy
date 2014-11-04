@@ -1,0 +1,39 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <img ng-src="{{url}}" class="the-gif center-block"/>
+        </div>
+        <div class="col-md-4">
+            <div class="share-box">
+                <h3>Share</h3>
+                <div class="sharebox share-directlink">
+                    <label for="share_directURL">Direct link</label>
+                    <input id="share_directURL" type="text" class="form-control" value="{{url}}" disabled>
+                </div>
+                <div class="sharebox share-giffylink">
+                    <label for="share_giffyURL">Giffy link</label>
+                    <input id="share_giffyURL" type="text" class="form-control" value="{{giffyUrl}}" disabled>
+                </div>
+            </div>
+
+            <div class="tag-box">
+                <h3>Tags</h3>
+                <div class="tag-list-box">
+                    <ul class="tag-list list-unstyled">
+                        <li ng-repeat="tag in tags">
+                            <span class="label label-primary">{{tag.name}} <a ng-click="removeTag(tag.id);"class="delete-tag-link">X</a></span>
+                        </li>
+                    </ul>
+                </div>
+                <form ng-submit="addTag()">
+                    <div class="tag-input-box input-group">
+                        <input class="form-control" ng-model="tag_name" placeholder="Add a tag" type="text">
+                        <span class="input-group-btn">
+                            <button type="submit" class="btn btn-default">Tag it!</button>
+                        </span>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

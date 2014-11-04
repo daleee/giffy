@@ -1,0 +1,14 @@
+<div class="gifImageUploader">
+    <p>
+        <button ng-click="onUploadBtnClick($event)" id="uploadBtn" class="btn btn-lg btn-primary">Upload</button>
+        <input id="hiddenFileInput" type="file" accept=".gif">
+    </p>
+    <div ng-show="uploadInProgress" class="progress">
+        <div class="progress-bar" role="progressbar" aria-valuenow="{{ currentUploadPercent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ currentUploadPercent }}%;">
+            <span>{{ currentUploadPercent}}%</span>
+        </div>
+    </div>
+    <div ng-show="errors">
+        <p class="bg-danger">{{ errors }}</p>
+    </div>
+</div>
