@@ -1,13 +1,14 @@
 module.exports = function(deps, models, awsOptions){
     "use strict";
 
-    var server = deps.server,
-        crypto = deps.crypto,
+    var express = deps.express,
+        server = deps.server,
         aws = deps.aws,
         shortid = deps.shortid,
         bookshelf = deps.bookshelf;
 
-    server.get('/', function(req, res, next) {
+    var router = express.Router();
+    router.get('/', function(req, res, next) {
         new models.Gif().fetchAll()
             .then(function (gifs) {
                 res.send(gifs.toJSON());
@@ -17,7 +18,7 @@ module.exports = function(deps, models, awsOptions){
             });
     });
 
-    server.get('/latest', function(req, res, next) {
+    router.get('/latest', function(req, res, next) {
         bookshelf.knex
             .select('*')
             .from('gifs')
@@ -31,7 +32,7 @@ module.exports = function(deps, models, awsOptions){
             });
     });
 
-    server.get('/gifs/:name', function (req, res, next) {
+    router.get('/gifs/:name', function (req, res, next) {
         var name = req.params.name;
         if(!name){
             res.send(500, 'Did not receive name!');
@@ -44,19 +45,17 @@ module.exports = function(deps, models, awsOptions){
             .then(function (model) {
                 if(!model){
                     res.send(500, "Object not found.");
-                    return next();
                 }
                 res.send(model);
-                return next();
             });
     });
 
-    server.post('/gifs/:name/tag', function (req, res, next) {
+    router.post('/gifs/:name/tag', function (req, res, next) {
         var name = req.params.name;
         var tag = req.params.tag;
         if(!name || !tag) {
             res.send(500, 'Did not recieve name or tag array!');
-            return next();
+            return;
         }
 
         models.Gif.forge({name: name})
@@ -74,15 +73,13 @@ module.exports = function(deps, models, awsOptions){
             })
             .then(function (tag) {
                 res.send(tag);
-                return next();
             })
             .catch(function (err) {
                 res.send(500, err);
-                return next();
             });
     });
 
-    server.del('/gifs/:name/tag/:tag_id', function (req, res, next) {
+    router.delete('/gifs/:name/tag/:tag_id', function (req, res, next) {
         var name = req.params.name;
         var tag_id = req.params.tag_id;
         if(!name || !tag_id) {
@@ -110,7 +107,7 @@ module.exports = function(deps, models, awsOptions){
             })
     });
 
-    server.post('/gifs', function (req, res, next) {
+    router.post('/gifs', function (req, res, next) {
         var url = req.params.url;
         var name = req.params.name;
         if(!url || !name) {
@@ -131,7 +128,7 @@ module.exports = function(deps, models, awsOptions){
     });
 
     // originally from taken from https://devcenter.heroku.com/articles/s3-upload-node
-    server.get('/sign_s3', function(req, res, next){
+    router.get('/sign_s3', function(req, res, next){
         var AWS_ACCESS_KEY = awsOptions.s3ClientConfig.key;
         var AWS_SECRET_KEY = awsOptions.s3ClientConfig.secret;
         var S3_BUCKET = awsOptions.s3ClientConfig.bucket;
@@ -171,4 +168,6 @@ module.exports = function(deps, models, awsOptions){
             }
         });
     });
+
+    server.use('/api', router);
 };

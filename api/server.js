@@ -1,7 +1,13 @@
-var restify = require('restify');
-var crypto = require('crypto');
-var aws = require('aws-sdk');
-var shortid = require('shortid');
+var express = require('express'),
+    app = express(),
+    cookieParser = require('cookie-parser'),
+    bodyParser = require('body-parser'),
+    session = require('express-session'),
+    morgan = require('morgan'),
+    aws = require('aws-sdk'),
+    shortid = require('shortid'),
+    passport = require('passport'),
+    bcrypt = require('bcrypt');
 
 // get config options from ./conf/*.js
 var apiOptions, awsOptions, dbOptions;
@@ -27,6 +33,22 @@ try {
     process.exit(1);
 }
 
+// intialzie express middlewares
+var env = process.env.NODE_ENV || 'development';
+if ('development' === env) {
+    app.use(morgan('dev'));
+}
+app.use(express.static('public'));
+app.use(morgan('combined'));
+app.use(cookieParser());
+app.use(bodyParser.urlencoded());
+app.use(bodyParser.json());
+app.use(session({
+    secret: 'ilovejuuuuuuuice!!!!1',
+    resave: true,
+    saveUninitialized: true
+}));
+
 // intialzie DB stuff
 var knex = require('knex')(dbOptions);
 var bookshelf = require('bookshelf')(knex);
@@ -41,38 +63,23 @@ knex.raw('select 1+1 as result')
         process.exit(1);
     });
 
-// create & configure server
-var server = restify.createServer();
-server.use(restify.bodyParser());
-server.use(restify.queryParser());
-//server.use(restify.CORS());
-server.pre(function corsMiddleware(req, res, next) {
-    //TODO: change to final url/make configurable for peoples
-    res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
-    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'content-type');
-    return next();
-});
-server.opts(/\.*/, function (req, res, next) {
-    res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
-    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'content-type');
-    res.send(200);
-    return next();
-});
-
 var deps = {
-    crypto: crypto,
     aws: aws,
     shortid: shortid,
     bookshelf: bookshelf,
-    server: server
-}
+    passport: passport,
+    bcrypt: bcrypt,
+    express: express,
+    server: app
+};
 
 var models = require('./models')(bookshelf);
+var passportConfig = require('./conf/passport.js')(deps, models);
 var routes = require('./routes')(deps, models, awsOptions);
 
 // start server
-server.listen(apiOptions.port, function () {
-    console.log('Giffy API is now online at: %s', server.url);
+var server = app.listen(apiOptions.port, function () {
+    console.log('Giffy API is now online at: %s:%s',
+        server.address().address,
+        server.address().port);
 });
