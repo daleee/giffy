@@ -5,20 +5,32 @@ module.exports = function(deps, models, awsOptions){
         server = deps.server,
         aws = deps.aws,
         shortid = deps.shortid,
+        passport = deps.passport,
+        bcrypt = deps.bcrypt,
         bookshelf = deps.bookshelf;
 
-    var router = express.Router();
-    router.get('/', function(req, res, next) {
-        new models.Gif().fetchAll()
+    // TODO: move these functions somewhere else
+    var isAuthenticated = function (req, res, next) {
+        if (req.isAuthenticated()) {
+            next();
+        } else {
+            res.status(401).end();
+        }
+    };
+
+    var apiRouter = express.Router();
+    apiRouter.get('/', function(req, res, next) {
+        new models.Gif()
+            .fetchAll()
             .then(function (gifs) {
                 res.send(gifs.toJSON());
             })
             .catch(function (error) {
-                res.send(500, error);
+                res.status(500).send(error);
             });
     });
 
-    router.get('/latest', function(req, res, next) {
+    apiRouter.get('/latest', function(req, res, next) {
         bookshelf.knex
             .select('*')
             .from('gifs')
@@ -28,91 +40,80 @@ module.exports = function(deps, models, awsOptions){
                 res.send(gifs);
             })
             .catch(function (error) {
-                res.send(500, error);
+                res.status(500).send(error);
             });
     });
 
-    router.get('/gifs/:name', function (req, res, next) {
-        var name = req.params.name;
-        if(!name){
-            res.send(500, 'Did not receive name!');
-            return next();
-        }
-        new models.Gif({name: name})
+    apiRouter.param('gif', function (req, res, next, gif_name) {
+        models.Gif
+            .forge({name: gif_name})
             .fetch({
-                withRelated: ['tags']
+                withRelated: ['tags'],
+                require: true
             })
-            .then(function (model) {
-                if(!model){
-                    res.send(500, "Object not found.");
-                }
-                res.send(model);
+            .then(function (gif) {
+                req.gif = gif;
+                next();
+            })
+            .catch(function () {
+                res.send(404, 'ERROR: GIF not found!');
+                next();
             });
     });
 
-    router.post('/gifs/:name/tag', function (req, res, next) {
-        var name = req.params.name;
-        var tag = req.params.tag;
-        if(!name || !tag) {
-            res.send(500, 'Did not recieve name or tag array!');
+    apiRouter.get('/gifs/:gif', function (req, res, next) {
+        res.send(req.gif);
+    });
+
+    apiRouter.post('/gifs/:gif/tag', isAuthenticated, function (req, res, next) {
+        var tag = req.body.tag,
+            gif = req.gif;
+
+        if(!tag){
+            res.status(400).send('ERROR: Did not a tag!');
             return;
         }
 
-        models.Gif.forge({name: name})
-            .fetch({require: true})
-            .then(function (gif) {
-                return models.Tag.forge({name: tag}).fetch().then(function (model) {
-                    if(!model) {
-                        return gif.tags().create({name: tag});
-                    }
-                    else {
-                        gif.tags().attach(model)
-                        return model;
-                    }
-                });
-            })
+        models.Tag.forge({name: tag}).fetch().then(function (model) {
+            if(!model) {
+                return gif.tags().create({name: tag});
+            }
+            else {
+                gif.tags().attach(model);
+                return model;
+            }
+        })
             .then(function (tag) {
                 res.send(tag);
             })
             .catch(function (err) {
-                res.send(500, err);
+                res.status(500).send(err);
             });
     });
 
-    router.delete('/gifs/:name/tag/:tag_id', function (req, res, next) {
-        var name = req.params.name;
-        var tag_id = req.params.tag_id;
-        if(!name || !tag_id) {
-            res.send(500, 'Did not receive GIF id or tag id!');
-            return next();
-        }
-
+    apiRouter.delete('/gifs/:gif/tag/:tag_id', function (req, res, next) {
+        var gif = req.gif,
+            tag_id = req.params.tag_id;
         // can't figure out how to remove models from collections using join tables
         // with bookshelf, so using knex to do it
-        models.Gif.forge({name: name})
-            .fetch({require: true})
-            .then(function (gif) {
-                return bookshelf.knex('gifs_tags')
-                    .where({gif_id: gif.id, tag_id: tag_id})
-                    .del();
-            })
-            .then(function (tag_id) {
-                res.send(200, tag_id);
-                return next();
+        bookshelf.knex('gifs_tags')
+            .where({gif_id: gif.id, tag_id: tag_id})
+            .del()
+            .then(function () {
+                res.send(tag_id);
             })
             .catch(function (err) {
-                res.send(500, err);
-                return next();
-
-            })
+                res.status(500).send(err);
+            });
     });
 
-    router.post('/gifs', function (req, res, next) {
-        var url = req.params.url;
-        var name = req.params.name;
+    apiRouter.post('/gifs', function (req, res, next) {
+        var url = req.body.url,
+            name = req.body.name;
+
         if(!url || !name) {
-            res.send(500, 'Did not receive url or name!');
-            return next();
+            res.status(400).send('ERROR: Did not receive GIF url or name.');
+            return;
         }
 
         new models.Gif({ url: url , name: name })
@@ -121,14 +122,44 @@ module.exports = function(deps, models, awsOptions){
                 res.send(model.toJSON());
             })
             .catch(function (error) {
-                res.send('ERROR: There was an error saving the new Gif!g model');
+                res.status(500).send('ERROR: There was an error saving the new Gif model.')
             });
+    });
+    
+    apiRouter.post('/user', function (req, res, next) {
+        var email = req.body.email,
+            pass = req.body.pass;
 
-        return next();
+        if(!email || !pass) {
+            res.status(500).send('ERROR: Did not receive email or password.');
+            return;
+        }
+        var hash = bcrypt.hashSync(pass, 8);
+        models.User.forge({email: email, hash: hash})
+            .save()
+            .then(function (model) {
+                res.send(model.omit('hash'));
+            })
+            .catch(function (error) {
+                res.send(400, 'ERROR: This user already exists.');
+            })
+        
+    });
+
+    apiRouter.post('/login',
+        passport.authenticate('local'),
+        function (req, res, next) {
+            res.status(200).send(req.user);
+        }
+    );
+
+    apiRouter.get('/logout', function(req, res){
+        req.logout();
+        res.status(200).end();
     });
 
     // originally from taken from https://devcenter.heroku.com/articles/s3-upload-node
-    router.get('/sign_s3', function(req, res, next){
+    apiRouter.get('/sign_s3', function(req, res, next){
         var AWS_ACCESS_KEY = awsOptions.s3ClientConfig.key;
         var AWS_SECRET_KEY = awsOptions.s3ClientConfig.secret;
         var S3_BUCKET = awsOptions.s3ClientConfig.bucket;
@@ -155,7 +186,7 @@ module.exports = function(deps, models, awsOptions){
         };
         s3.getSignedUrl('putObject', s3_params, function(err, data){
             if(err){
-                res.send(500, err)
+                res.status(500).send(err);
             }
             else{
                 var return_data = {
@@ -169,5 +200,12 @@ module.exports = function(deps, models, awsOptions){
         });
     });
 
-    server.use('/api', router);
+    var webRouter = express.Router();
+    webRouter.get('*', function (req, res, next) {
+        res.sendfile('./public/index.html');
+    });
+
+    server.use('/api', apiRouter);
+    server.use('/', webRouter);
+
 };

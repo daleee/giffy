@@ -37,17 +37,18 @@ try {
 var env = process.env.NODE_ENV || 'development';
 if ('development' === env) {
     app.use(morgan('dev'));
+} else {
+    app.use(morgan('combined'));
 }
 app.use(express.static('public'));
-app.use(morgan('combined'));
 app.use(cookieParser());
 app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
 app.use(session({
-    secret: 'ilovejuuuuuuuice!!!!1',
-    resave: true,
-    saveUninitialized: true
+    secret: 'ilovejuuuuuuuice!!!!1'
 }));
+app.use(passport.initialize());
+app.use(passport.session());
 
 // intialzie DB stuff
 var knex = require('knex')(dbOptions);

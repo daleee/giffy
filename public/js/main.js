@@ -1,9 +1,7 @@
-'use strict';
-
 var giffy = angular.module('giffy', ['ngRoute']);
 
-giffy.config(['$routeProvider', '$httpProvider',
-    function($routeProvider, $httpProvider) {
+giffy.config(['$routeProvider', '$locationProvider',
+    function($routeProvider, $locationProvider) {
         $routeProvider
             .when('/', {
                 templateUrl: 'views/main.html',
@@ -17,11 +15,17 @@ giffy.config(['$routeProvider', '$httpProvider',
                 templateUrl: 'views/gif_detail.html',
                 controller: 'GifDetailCtrl'
             })
+            .when('/signup', {
+                templateUrl: 'views/signup.html',
+                controller: 'SignUpCtrl'
+            })
+            .when('/login', {
+                templateUrl: 'views/login.html',
+                controller: 'LoginCtrl'
+            })
             .otherwise({
                 redirectTo: '/'
             });
-        $httpProvider.defaults.useXDomain = true;
 
-        //Remove the header used to identify ajax call  that would prevent CORS from working
-        delete $httpProvider.defaults.headers.common['X-Requested-With'];
+        $locationProvider.html5Mode(true);
     }]);
