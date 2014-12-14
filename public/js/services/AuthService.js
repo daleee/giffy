@@ -1,12 +1,12 @@
 angular.module('giffy')
-    .factory('AuthService', ['$http', 'SessionService', 'CONFIG', function($http, Session, CONFIG) {
+    .factory('AuthService', ['$rootScope', '$http', '$cookieStore', 'SessionService', 'CONFIG', 'AUTH_EVENTS', function($rootScope, $http, $cookieStore, Session, CONFIG, AUTH_EVENTS) {
         var authService = {};
 
         authService.createUser = function createUser (email, pass){
             return $http
                 .post(CONFIG.apiEndpoint + '/user', {email: email, pass: pass})
                 .then(function (res) {
-                    Session.create(res.data.id, res.data.email);
+                    Session.create(res.data);
                     return res.data;
                 });
         };
@@ -15,7 +15,7 @@ angular.module('giffy')
             return $http
                 .post(CONFIG.apiEndpoint + '/login', {username: email, password: pass})
                 .then(function (res) {
-                    Session.create(res.data.id, res.data.email);
+                    Session.create(res.data);
                     return res.data;
                 });
         };
@@ -30,6 +30,15 @@ angular.module('giffy')
 
         authService.isAuthenticated = function () {
             return !!Session.userId;
+        };
+
+        authService.initialize = function() {
+            var userSessionData = $cookieStore.get('user');
+            if(userSessionData) {
+                var parsedUserData = JSON.parse(userSessionData);
+                Session.create(parsedUserData);
+                $rootScope.$emit(AUTH_EVENTS.loginSession, parsedUserData);
+            }
         };
 
         return authService;

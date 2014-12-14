@@ -11,7 +11,7 @@ module.exports = function(deps, models, awsOptions){
 
     // TODO: move these functions somewhere else
     var isAuthenticated = function (req, res, next) {
-        if (req.isAuthenticated()) {
+        if (req.session.user) {
             next();
         } else {
             res.status(401).end();
@@ -148,12 +148,35 @@ module.exports = function(deps, models, awsOptions){
 
     apiRouter.post('/login',
         function (req, res, next) {
-            res.status(200).send(req.user);
+            var username = req.body.username,
+                password = req.body.password;
+            console.log(username, password);
+            models.User.forge({'email': username})
+                .fetch({required: true})
+                .then(function (model) {
+                    var hash = model.get('hash');
+                    bcrypt.compare(password, hash, function (err, result) {
+                        if(result === true) {
+                            var user = model.omit('hash');
+                            req.session.user = user
+                            res.status(200).send(user);
+                        }
+                        else {
+                            res.status(401).send({'error': 'Invalid password!'});
+
+                        }
+                    });
+                })
+                .catch(function () {
+                    res.status(500).send({'error': 'Invalid username or password.'});
+                });
         }
     );
 
     apiRouter.get('/logout', function(req, res){
-        req.logout();
+        if (req.session) {
+            req.session = {};
+        }
         res.status(200).end();
     });
 
@@ -201,11 +224,9 @@ module.exports = function(deps, models, awsOptions){
 
     var webRouter = express.Router();
     webRouter.get('*', function (req, res, next) {
-        if (req.passport && req.passport.user) {
-
+        if (req.session && req.session.user) {
+            req.user = req.session.user;
         }
-        console.log(req.user);
-        console.log(req.session);
         res.sendfile('./public/index.html');
     });
 
