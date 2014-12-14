@@ -147,7 +147,6 @@ module.exports = function(deps, models, awsOptions){
     });
 
     apiRouter.post('/login',
-        passport.authenticate('local'),
         function (req, res, next) {
             res.status(200).send(req.user);
         }
@@ -202,6 +201,11 @@ module.exports = function(deps, models, awsOptions){
 
     var webRouter = express.Router();
     webRouter.get('*', function (req, res, next) {
+        if (req.passport && req.passport.user) {
+
+        }
+        console.log(req.user);
+        console.log(req.session);
         res.sendfile('./public/index.html');
     });
 

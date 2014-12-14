@@ -1,4 +1,4 @@
-var giffy = angular.module('giffy', ['ngRoute']);
+var giffy = angular.module('giffy', ['ngRoute', 'ngCookies']);
 
 giffy.config(['$routeProvider', '$locationProvider',
     function($routeProvider, $locationProvider) {

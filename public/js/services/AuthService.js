@@ -6,7 +6,7 @@ angular.module('giffy')
             return $http
                 .post(CONFIG.apiEndpoint + '/user', {email: email, pass: pass})
                 .then(function (res) {
-                    // TODO: create session
+                    Session.create(res.data.id, res.data.email);
                     return res.data;
                 });
         };
@@ -24,7 +24,6 @@ angular.module('giffy')
             return $http
                 .get(CONFIG.apiEndpoint + '/logout')
                 .then(function (res) {
-                    // TODO: create session
                     Session.destroy();
                 });
         };

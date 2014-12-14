@@ -2,11 +2,11 @@ var express = require('express'),
     app = express(),
     cookieParser = require('cookie-parser'),
     bodyParser = require('body-parser'),
-    session = require('express-session'),
+    session = require('client-sessions'),
     morgan = require('morgan'),
     aws = require('aws-sdk'),
     shortid = require('shortid'),
-    passport = require('passport'),
+    //passport = require('passport'),
     bcrypt = require('bcrypt');
 
 // get config options from ./conf/*.js
@@ -45,10 +45,13 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
 app.use(session({
-    secret: 'ilovejuuuuuuuice!!!!1'
+    cookieName: 'session',
+    secret: 'ilovejuuuuuuuice!!!!1',
+    duration: 30 * 60 * 1000,
+    activeDuration: 5 * 60 * 1000
 }));
-app.use(passport.initialize());
-app.use(passport.session());
+//app.use(passport.initialize());
+//app.use(passport.session());
 
 // intialzie DB stuff
 var knex = require('knex')(dbOptions);
@@ -68,14 +71,14 @@ var deps = {
     aws: aws,
     shortid: shortid,
     bookshelf: bookshelf,
-    passport: passport,
+    //passport: passport,
     bcrypt: bcrypt,
     express: express,
     server: app
 };
 
 var models = require('./models')(bookshelf);
-var passportConfig = require('./conf/passport.js')(deps, models);
+//var passportConfig = require('./conf/passport.js')(deps, models);
 var routes = require('./routes')(deps, models, awsOptions);
 
 // start server
