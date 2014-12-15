@@ -6,7 +6,6 @@ var express = require('express'),
     morgan = require('morgan'),
     aws = require('aws-sdk'),
     shortid = require('shortid'),
-    //passport = require('passport'),
     bcrypt = require('bcrypt');
 
 // get config options from ./conf/*.js
@@ -50,8 +49,6 @@ app.use(session({
     duration: 30 * 60 * 1000,
     activeDuration: 5 * 60 * 1000
 }));
-//app.use(passport.initialize());
-//app.use(passport.session());
 
 // intialzie DB stuff
 var knex = require('knex')(dbOptions);
@@ -78,7 +75,6 @@ var deps = {
 };
 
 var models = require('./models')(bookshelf);
-//var passportConfig = require('./conf/passport.js')(deps, models);
 var routes = require('./routes')(deps, models, awsOptions);
 
 // start server

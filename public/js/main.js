@@ -5,15 +5,18 @@ giffy.config(['$routeProvider', '$locationProvider',
         $routeProvider
             .when('/', {
                 templateUrl: 'views/main.html',
-                controller: 'MainCtrl'
+                controller: 'MainCtrl',
+                activeTab: 'home'
             })
             .when('/gifs', {
                 templateUrl: 'views/gif_list.html',
-                controller: 'GifListCtrl'
+                controller: 'GifListCtrl',
+                activeTab: 'gifs'
             })
             .when('/gifs/:name', {
                 templateUrl: 'views/gif_detail.html',
-                controller: 'GifDetailCtrl'
+                controller: 'GifDetailCtrl',
+                activeTab: 'gifs'
             })
             .when('/signup', {
                 templateUrl: 'views/signup.html',

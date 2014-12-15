@@ -1,6 +1,7 @@
 angular.module('giffy')
-.controller('ApplicationCtrl',['$scope', '$rootScope', '$location', 'AuthService', 'AUTH_EVENTS', function ($scope, $rootScope, $location, AuthService, AUTH_EVENTS) {
+.controller('ApplicationCtrl',['$scope', '$route', '$rootScope', '$location', 'AuthService', 'AUTH_EVENTS', function ($scope, $route, $rootScope, $location, AuthService, AUTH_EVENTS) {
         $scope.currentUser = null;
+        $scope.$route = $route;
 
         $scope.setCurrentUser = function (user) {
             $scope.currentUser = user;

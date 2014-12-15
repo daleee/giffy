@@ -19,16 +19,16 @@ module.exports = function(deps, models, awsOptions){
     };
 
     var apiRouter = express.Router();
-    apiRouter.get('/', function(req, res, next) {
-        new models.Gif()
-            .fetchAll()
-            .then(function (gifs) {
-                res.send(gifs.toJSON());
-            })
-            .catch(function (error) {
-                res.status(500).send(error);
-            });
-    });
+    //apiRouter.get('/', function(req, res, next) {
+    //    new models.Gif()
+    //        .fetchAll()
+    //        .then(function (gifs) {
+    //            res.send(gifs.toJSON());
+    //        })
+    //        .catch(function (error) {
+    //            res.status(500).send(error);
+    //        });
+    //});
 
     apiRouter.get('/latest', function(req, res, next) {
         bookshelf.knex
@@ -42,6 +42,41 @@ module.exports = function(deps, models, awsOptions){
             .catch(function (error) {
                 res.status(500).send(error);
             });
+    });
+
+    apiRouter.get('/gifs', function(req, res, next) {
+        var page = req.query.page || 0;
+        var numPerPage = req.query.numperpage || 25;
+        // prevent negative numbers
+        // TODO: make sure these are numbers
+        page = Math.abs(page);
+        numPerPage = Math.abs(numPerPage);
+
+        bookshelf.knex
+            .select('*')
+            .from('gifs')
+            .orderBy('created_at', 'desc')
+            .limit(numPerPage)
+            .offset(numPerPage * page)
+            .then(function (gifs) {
+                res.send(gifs);
+            })
+            .catch(function (error) {
+                res.status(500).send(error);
+            });
+
+    });
+
+    apiRouter.get('/gifs/count', function(req, res, next) {
+        bookshelf.knex('gifs')
+            .count('id')
+            .then(function (count) {
+                res.send(count)
+            })
+            .catch(function (error) {
+                res.status(500).send(error);
+            });
+
     });
 
     apiRouter.param('gif', function (req, res, next, gif_name) {
@@ -91,7 +126,7 @@ module.exports = function(deps, models, awsOptions){
             });
     });
 
-    apiRouter.delete('/gifs/:gif/tag/:tag_id', function (req, res, next) {
+    apiRouter.delete('/gifs/:gif/tag/:tag_id', isAuthenticated, function (req, res, next) {
         var gif = req.gif,
             tag_id = req.params.tag_id;
         // can't figure out how to remove models from collections using join tables
@@ -107,7 +142,7 @@ module.exports = function(deps, models, awsOptions){
             });
     });
 
-    apiRouter.post('/gifs', function (req, res, next) {
+    apiRouter.post('/gifs', isAuthenticated, function (req, res, next) {
         var url = req.body.url,
             name = req.body.name;
 
@@ -181,7 +216,7 @@ module.exports = function(deps, models, awsOptions){
     });
 
     // originally from taken from https://devcenter.heroku.com/articles/s3-upload-node
-    apiRouter.get('/sign_s3', function(req, res, next){
+    apiRouter.get('/sign_s3', isAuthenticated, function(req, res, next){
         var AWS_ACCESS_KEY = awsOptions.s3ClientConfig.key;
         var AWS_SECRET_KEY = awsOptions.s3ClientConfig.secret;
         var S3_BUCKET = awsOptions.s3ClientConfig.bucket;

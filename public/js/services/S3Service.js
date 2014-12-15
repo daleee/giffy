@@ -3,12 +3,23 @@
 angular.module('giffy')
     .factory('S3Service', ['$http', 'CONFIG', function($http, CONFIG) {
         $http.defaults.useXDomain = true;
-        function getListOfGifs (){
-            return $http.get(CONFIG.apiEndpoint + '/');
+        function getListOfGifs (page, numPerPage){
+            var qs = '?';
+            if(page) {
+                qs += 'page=' + page + '&';
+            }
+            if(numPerPage) {
+                qs += 'numperpage=' + numPerPage;
+            }
+            return $http.get(CONFIG.apiEndpoint + '/gifs' + qs);
         }
 
         function getGif(name) {
             return $http.get(CONFIG.apiEndpoint + '/gifs/' + name);
+        }
+
+        function getGifCount() {
+            return $http.get(CONFIG.apiEndpoint + '/gifs/count');
         }
 
         function getLatestGifs (){
@@ -30,6 +41,7 @@ angular.module('giffy')
         return {
             getListOfGifs: getListOfGifs,
             getGif: getGif,
+            getGifCount: getGifCount,
             getLatestGifs: getLatestGifs,
             addTagToGif: addTagToGif,
             removeTagFromGif: removeTagFromGif

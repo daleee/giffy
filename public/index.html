@@ -17,10 +17,10 @@
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li class="active">
+                <li ng-class="{'active': $route.current.activeTab === 'home'}">
                     <a href="/">Home</a>
                 </li>
-                <li>
+                <li ng-class="{'active': $route.current.activeTab === 'gifs'}">
                     <a href="/gifs">GIFs</a>
                 </li>
             </ul>

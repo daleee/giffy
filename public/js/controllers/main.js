@@ -1,8 +1,9 @@
 'use strict';
 
 angular.module('giffy')
-    .controller('MainCtrl', ['$scope', '$location', 'S3Service', function($scope, $location, S3Service) {
+    .controller('MainCtrl', ['$scope', '$location', '$route', 'S3Service', function($scope, $location, $route, S3Service) {
         $scope.gifList = [];
+        $scope.$route = $route;
 
         S3Service.getLatestGifs()
             .success(function(data){

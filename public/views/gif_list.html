@@ -1,9 +1,27 @@
-<div>
-    <ul class="giflist">
-        <li class="giflist-item" ng-repeat="gif in gifList">
-            <a ng-href="{{ gif.url }}">
-                <img class="img-responsive img-thumbnail" width="200" ng-src="{{ gif.url }}" alt="{{gif.fileName}}"/>
-            </a>
-        </li>
-    </ul>
+<div class="container">
+    <div>
+        <nav>
+            <ul class="pager">
+                <li ng-class="{'disabled': currentPage === 0}" class="previous"><a ng-click="loadPrevPage()"><span aria-hidden="true">&larr;</span> Previous</a></li>
+                <li ng-class="{'disabled': !gifList || gifList.length < numPerPage}" class="next"><a ng-click="loadNextPage()">Next <span aria-hidden="true">&rarr;</span></a></li>
+            </ul>
+        </nav>
+    </div>
+    <div>
+        <ul class="giflist">
+            <li class="giflist-item" ng-repeat="gif in gifList">
+                <a ng-href="{{ gif.url }}">
+                    <img class="img-responsive img-thumbnail" width="200" ng-src="{{ gif.url }}" alt="{{gif.fileName}}"/>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div>
+        <nav>
+            <ul class="pager">
+                <li ng-class="{'disabled': currentPage === 0}" class="previous"><a ng-click="loadPrevPage()"><span aria-hidden="true">&larr;</span> Previous</a></li>
+                <li ng-class="{'disabled': !gifList || gifList.length < numPerPage}" class="next"><a ng-click="loadNextPage()">Next <span aria-hidden="true">&rarr;</span></a></li>
+            </ul>
+        </nav>
+    </div>
 </div>
