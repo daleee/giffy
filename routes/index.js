@@ -19,16 +19,6 @@ module.exports = function(deps, models, awsOptions){
     };
 
     var apiRouter = express.Router();
-    //apiRouter.get('/', function(req, res, next) {
-    //    new models.Gif()
-    //        .fetchAll()
-    //        .then(function (gifs) {
-    //            res.send(gifs.toJSON());
-    //        })
-    //        .catch(function (error) {
-    //            res.status(500).send(error);
-    //        });
-    //});
 
     apiRouter.get('/latest', function(req, res, next) {
         bookshelf.knex
@@ -159,6 +149,37 @@ module.exports = function(deps, models, awsOptions){
             .catch(function (error) {
                 res.status(500).send('ERROR: There was an error saving the new Gif model.')
             });
+    });
+
+    apiRouter.param('tag', function (req, res, next, tag_name) {
+        models.Tag
+            .forge({name: tag_name})
+            .fetch({
+                withRelated: ['gifs'],
+                require: true
+            })
+            .then(function (tag) {
+                req.tag = tag;
+                next();
+            })
+            //.catch(function () {
+            //    res.status(404).send('ERROR: Tag not found!');
+            //});
+    });
+
+    apiRouter.get('/tags', function(req, res, next) {
+        new models.Tag()
+            .fetchAll()
+            .then(function (tags) {
+                res.send(tags.toJSON());
+            })
+            .catch(function (error) {
+                res.status(500).send(error);
+            });
+    });
+
+    apiRouter.get('/tags/:tag', function(req, res, next) {
+        res.send(req.tag);
     });
     
     apiRouter.post('/user', function (req, res, next) {

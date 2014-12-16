@@ -53,6 +53,7 @@ app.use(session({
 // intialzie DB stuff
 var knex = require('knex')(dbOptions);
 var bookshelf = require('bookshelf')(knex);
+bookshelf.plugin('registry'); // load model registry plugin
 
 // since knex/bookshelf uses connection pool, need to fake a query to check if sql if reachable
 knex.raw('select 1+1 as result')

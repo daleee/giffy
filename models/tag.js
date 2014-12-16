@@ -4,9 +4,10 @@ module.exports = function tagModel(bookshelf){
     var Tag = bookshelf.Model.extend({
         tableName: 'tags',
         gifs: function () {
-            return this.belongsToMany(Gif, 'gifs_tags');
+            return this.belongsToMany('Gif', 'gifs_tags');
         }
     });
 
+    bookshelf.model('Tag', Tag);
     return Tag;
 };
