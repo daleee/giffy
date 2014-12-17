@@ -42,6 +42,20 @@
     margin-top: 20px;
 }
 
+/* views/gif_detail.html */
+.tag-box a {
+    color: white;
+}
+
+/* views/gif_creator.html */
+video {
+    widtdh: 50%;
+}
+
+canvas {
+    widtdh: 50%;
+}
+
 /* directive: uploader for s3 */
 #hiddenFileInput {
     display: none;

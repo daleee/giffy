@@ -18,6 +18,16 @@ giffy.config(['$routeProvider', '$locationProvider',
                 controller: 'GifDetailCtrl',
                 activeTab: 'gifs'
             })
+            .when('/tags/:name', {
+                templateUrl: 'views/tag_results.html',
+                controller: 'TagResultsCtrl',
+                activeTab: 'gifs'
+            })
+            .when('/create', {
+                templateUrl: 'views/gif_creator.html',
+                controller: 'GifCreatorCtrl',
+                activeTab: 'gifs'
+            })
             .when('/signup', {
                 templateUrl: 'views/signup.html',
                 controller: 'SignUpCtrl'

@@ -22,6 +22,10 @@ angular.module('giffy')
             return $http.get(CONFIG.apiEndpoint + '/gifs/count');
         }
 
+        function getGifsWithTag(tagName) {
+            return $http.get(CONFIG.apiEndpoint + '/tags/' + tagName);
+        }
+
         function getLatestGifs (){
             return $http.get(CONFIG.apiEndpoint + '/latest');
         }
@@ -42,6 +46,7 @@ angular.module('giffy')
             getListOfGifs: getListOfGifs,
             getGif: getGif,
             getGifCount: getGifCount,
+            getGifsWithTag: getGifsWithTag,
             getLatestGifs: getLatestGifs,
             addTagToGif: addTagToGif,
             removeTagFromGif: removeTagFromGif

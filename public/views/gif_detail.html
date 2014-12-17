@@ -21,11 +21,11 @@
                 <div class="tag-list-box">
                     <ul class="tag-list list-unstyled">
                         <li ng-repeat="tag in tags">
-                            <span class="label label-primary">{{tag.name}} <a ng-click="removeTag(tag.id);"class="delete-tag-link">X</a></span>
+                            <span class="label label-primary"><a ng-href="/tags/{{tag.name}}">{{tag.name}}</a> <a ng-show="isAuthenticated()" ng-click="removeTag(tag.id);"class="delete-tag-link">X</a></span>
                         </li>
                     </ul>
                 </div>
-                <form ng-submit="addTag()">
+                <form ng-show="isAuthenticated()" ng-submit="addTag()">
                     <div class="tag-input-box input-group">
                         <input class="form-control" ng-model="tag_name" placeholder="Add a tag" type="text">
                         <span class="input-group-btn">

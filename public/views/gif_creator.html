@@ -1,0 +1,11 @@
+<div class="container">
+    <div ng-if="supportsGUM() === true">
+        <video id="video"></video>
+        <canvas id="canvas" width="320" height="240"></canvas>
+        <button ng-click="captureFrame()" id="capture">Capture</button>
+    </div>
+    <div ng-if="supportsGUM() === false">
+        You are not using a browser that supports WebRTC.
+        This feature requires you use either <a href="https://www.mozilla.org/en-US/firefox/desktop/">Mozilla Firefox</a> or <a href="http://www.google.com/chrome/">Google Chrome</a>.
+    </div>
+</div>

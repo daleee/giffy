@@ -1,7 +1,11 @@
 'use strict';
 
 angular.module('giffy')
-    .controller('GifDetailCtrl', ['$scope', '$routeParams', 'S3Service', function($scope, $routeParams, S3Service) {
+    .controller('GifDetailCtrl', ['$scope', '$routeParams', 'S3Service', 'AuthService', function($scope, $routeParams, S3Service, AuthService) {
+        $scope.isAuthenticated = function() {
+            return AuthService.isAuthenticated();
+        };
+
         $scope.addTag = function () {
             if(!$scope.tag_name) return; //TODO: show error saying 'pls give name'
             S3Service.addTagToGif($routeParams.name, $scope.tag_name)
