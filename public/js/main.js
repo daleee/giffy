@@ -36,9 +36,12 @@ giffy.config(['$routeProvider', '$locationProvider',
                 templateUrl: 'views/login.html',
                 controller: 'LoginCtrl'
             })
-            .otherwise({
-                redirectTo: '/'
-            });
+            .when('/lib/gifjs/gif.worker.js', {
+                templateUrl: 'lib/gifjs/gif.worker.js'
+            })
+            //.otherwise({
+            //    redirectTo: '/'
+            //});
 
         $locationProvider.html5Mode(true);
     }]);

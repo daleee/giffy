@@ -48,13 +48,10 @@
 }
 
 /* views/gif_creator.html */
-video {
-    widtdh: 50%;
+.controls {
+    margin-top: 25px;
 }
 
-canvas {
-    widtdh: 50%;
-}
 
 /* directive: uploader for s3 */
 #hiddenFileInput {

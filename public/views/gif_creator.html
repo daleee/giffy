@@ -1,8 +1,42 @@
 <div class="container">
+    <div class="page-header">
+        <h1>GIF Creator <small>create gifs using your webcam</small></h1>
+    </div>
     <div ng-if="supportsGUM() === true">
-        <video id="video"></video>
-        <canvas id="canvas" width="320" height="240"></canvas>
-        <button ng-click="captureFrame()" id="capture">Capture</button>
+        <div ng-show="!currentRenderState">
+           <p>Your browser should now be prompting you for permissoin to your webcam. In order to create GIFs using your
+           webcam, please accept this request.</p>
+        </div>
+        <div ng-show="currentRenderState === RENDER_STATE.WAITING">
+            <div class="row">
+                <div class="col-md-6">
+                    <h3>Webcam View</h3>
+                    <video id="video" width="320" height="240"></video>
+                </div>
+                <div class="col-md-6">
+                    <h3>Last Captured Frame</h3>
+                    <canvas id="canvas" width="320" height="240" style="display: block; background-color: #000000;"></canvas>
+                    <span>Number of frames captures: {{ numOfFrames }}</span>
+                </div>
+            </div>
+            <div class="controls">
+                <button class="btn btn-lg btn-default" ng-click="captureFrame()" id="capture">Capture a frame</button>
+                <button class="btn btn-lg btn-primary" ng-disabled="numOfFrames === 0" ng-click="renderGIF()" id="Render">Render your GIF</button>
+            </div>
+        </div>
+        <div ng-show="currentRenderState === RENDER_STATE.RENDERING">
+            Rendering your image...
+        </div>
+        <div ng-show="currentRenderState === RENDER_STATE.COMPLETE">
+            <div id="renderedGifHolder">
+                <img id="finalGif">
+            </div>
+            <div class="controls">
+                <a id="finalGifDownloadLink" class="btn btn-lg btn-default" download>Save to disk</a>
+                or
+                <button ng-click="uploadGIF()" id="uploadGifToGiffyLink" class="btn btn-lg btn-primary">Upload to Giffy</button>
+            </div>
+        </div>
     </div>
     <div ng-if="supportsGUM() === false">
         You are not using a browser that supports WebRTC.

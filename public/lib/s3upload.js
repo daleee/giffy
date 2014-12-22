@@ -27,8 +27,23 @@
       for (option in options) {
         this[option] = options[option];
       }
-      this.handleFileSelect(document.getElementById(this.file_dom_selector));
+      if (options.blobMode) {
+        this.handleBlob(options.blob);
+      }
+      else {
+        this.handleFileSelect(document.getElementById(this.file_dom_selector));
+      }
     }
+
+    S3Upload.prototype.handleBlob = function(blob) {
+      var f, files, output, _i, _len, _results;
+      this.onProgress(0, 'Upload started.');
+      output = [];
+      _results = [];
+      console.log(blob);
+      _results.push(this.uploadFile(blob));
+      return _results;
+    };
 
     S3Upload.prototype.handleFileSelect = function(file_element) {
       var f, files, output, _i, _len, _results;

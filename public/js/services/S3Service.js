@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('giffy')
-    .factory('S3Service', ['$http', 'CONFIG', function($http, CONFIG) {
+    .factory('S3Service', ['$http', '$location', 'CONFIG', function($http, $location, CONFIG) {
         $http.defaults.useXDomain = true;
         function getListOfGifs (page, numPerPage){
             var qs = '?';
@@ -38,8 +38,14 @@ angular.module('giffy')
             return $http.delete(CONFIG.apiEndpoint + '/gifs/' + gif_name + '/tag/' + tag_id);
         }
 
-        function registerGifWithAPI () {
-            // TODO: make api call to register db entry for img
+        function registerGifWithAPI (public_url, name) {
+            return $http.post(CONFIG.apiEndpoint + '/gifs', {"url" : public_url, "name" : name})
+                .success(function (data, status, headers, config) {
+                    $location.url('/gifs/' + name);
+                })
+                .error(function (data, status, headers, config) {
+                    console.log(data);
+                })
         }
 
         return {
@@ -49,6 +55,7 @@ angular.module('giffy')
             getGifsWithTag: getGifsWithTag,
             getLatestGifs: getLatestGifs,
             addTagToGif: addTagToGif,
+            registerGifWithAPI: registerGifWithAPI,
             removeTagFromGif: removeTagFromGif
         };
     }]);
