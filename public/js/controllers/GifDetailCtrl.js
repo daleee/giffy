@@ -2,8 +2,14 @@
 
 angular.module('giffy')
     .controller('GifDetailCtrl', ['$scope', '$routeParams', 'S3Service', 'AuthService', function($scope, $routeParams, S3Service, AuthService) {
+        $scope.tags = [];
         $scope.isAuthenticated = function() {
-            return AuthService.isAuthenticated();
+            if (AuthService.requiresAuthentication === false) {
+                return true;
+            }
+            else {
+                return AuthService.isAuthenticated();
+            }
         };
 
         $scope.addTag = function () {

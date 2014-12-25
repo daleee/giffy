@@ -17,8 +17,8 @@
             </div>
 
             <div class="tag-box">
-                <h3>Tags</h3>
-                <div class="tag-list-box">
+                <div ng-hide="tags.length === 0" class="tag-list-box">
+                    <h3>Tags</h3>
                     <ul class="tag-list list-unstyled">
                         <li ng-repeat="tag in tags">
                             <span class="label label-primary"><a ng-href="/tags/{{tag.name}}">{{tag.name}}</a> <a ng-show="isAuthenticated()" ng-click="removeTag(tag.id);"class="delete-tag-link">X</a></span>

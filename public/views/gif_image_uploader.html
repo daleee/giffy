@@ -3,7 +3,7 @@
         <button ng-click="onUploadBtnClick($event)" id="uploadBtn" class="btn btn-lg btn-primary">Upload a GIF</button>
         <input id="hiddenFileInput" type="file" accept=".gif">
         or
-        <a class="btn btn-lg btn-info" href="/create">Create one with your webcam</a>
+        <a class="btn btn-lg btn-info" href="/create">Create a GIF with your webcam</a>
     </p>
     <div ng-show="uploadInProgress" class="progress">
         <div class="progress-bar" role="progressbar" aria-valuenow="{{ currentUploadPercent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ currentUploadPercent }}%;">

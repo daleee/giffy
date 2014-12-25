@@ -72,7 +72,8 @@ var deps = {
     //passport: passport,
     bcrypt: bcrypt,
     express: express,
-    server: app
+    server: app,
+    requiresAuthentication: apiOptions.requiresAuthentication
 };
 
 var models = require('./models')(bookshelf);

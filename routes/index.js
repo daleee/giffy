@@ -7,14 +7,20 @@ module.exports = function(deps, models, awsOptions){
         shortid = deps.shortid,
         passport = deps.passport,
         bcrypt = deps.bcrypt,
-        bookshelf = deps.bookshelf;
+        bookshelf = deps.bookshelf,
+        requiresAuthentication = deps.requiresAuthentication;
 
     // TODO: move these functions somewhere else
     var isAuthenticated = function (req, res, next) {
-        if (req.session.user) {
+        if (requiresAuthentication === true) {
+            if (req.session.user) {
+                next();
+            } else {
+                res.status(401).end();
+            }
+        }
+        else {
             next();
-        } else {
-            res.status(401).end();
         }
     };
 
@@ -206,7 +212,6 @@ module.exports = function(deps, models, awsOptions){
         function (req, res, next) {
             var username = req.body.username,
                 password = req.body.password;
-            console.log(username, password);
             models.User.forge({'email': username})
                 .fetch({required: true})
                 .then(function (model) {
@@ -214,7 +219,7 @@ module.exports = function(deps, models, awsOptions){
                     bcrypt.compare(password, hash, function (err, result) {
                         if(result === true) {
                             var user = model.omit('hash');
-                            req.session.user = user
+                            req.session.user = user;
                             res.status(200).send(user);
                         }
                         else {
@@ -224,7 +229,7 @@ module.exports = function(deps, models, awsOptions){
                     });
                 })
                 .catch(function () {
-                    res.status(500).send({'error': 'Invalid username or password.'});
+                    res.status(401).send({'error': 'Invalid username or password.'});
                 });
         }
     );

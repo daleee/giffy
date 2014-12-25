@@ -1,6 +1,6 @@
-var giffy = angular.module('giffy', ['ngRoute', 'ngCookies']);
-
+var giffy = angular.module('giffy', ['ngRoute']);
 giffy.config(['$routeProvider', '$locationProvider',
+
     function($routeProvider, $locationProvider) {
         $routeProvider
             .when('/', {

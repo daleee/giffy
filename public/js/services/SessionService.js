@@ -1,15 +1,19 @@
 angular.module('giffy')
-    .service('SessionService', ['$cookieStore', function ($cookieStore) {
-        this.create = function (user) {
+    .service('SessionService', [function () {
+        this.create = function (user, createCookie) {
             this.id = user.id;
             this.userId = user.email;
-            $cookieStore.put('user', JSON.stringify(user));
+            if (createCookie === true) {
+                Cookies.set('user', JSON.stringify(user), {
+                    expires: 1800
+                });
+            }
         };
 
         this.destroy = function () {
             this.id = null;
             this.userId = null;
-            $cookieStore.remove('user');
+            Cookies.expire('user');
         };
 
         return this;
