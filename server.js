@@ -69,7 +69,6 @@ var deps = {
     aws: aws,
     shortid: shortid,
     bookshelf: bookshelf,
-    //passport: passport,
     bcrypt: bcrypt,
     express: express,
     server: app,
