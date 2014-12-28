@@ -79,7 +79,8 @@ var models = require('./models')(bookshelf);
 var routes = require('./routes')(deps, models, awsOptions);
 
 // start server
-var server = app.listen(apiOptions.port, function () {
+var port = process.env.PORT || apiOptions.port || 5000;
+var server = app.listen(port, function () {
     console.log('Giffy API is now online at: %s:%s',
         server.address().address,
         server.address().port);
