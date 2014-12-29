@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('giffy')
-    .directive('gifImageUploader', ['$location', '$http', 'S3Service', function($location, $http, S3Service){
+    .directive('gifImageUploader', ['$location', '$http', 'S3Service', 'CONFIG', function($location, $http, S3Service, CONFIG){
         return {
             restrict: 'E',
             replace: 'true',
@@ -47,7 +47,7 @@ angular.module('giffy')
                     //TODO: take hardcoded url out
                     var s3upload = new S3Upload({
                         file_dom_selector: 'hiddenFileInput',
-                        s3_sign_put_url: 'http://localhost:8080/api/sign_s3',
+                        s3_sign_put_url: CONFIG.apiEndpoint + '/sign_s3',
                         onProgress:  onUploadProgress,
                         onFinishS3Put: onUploadFinish,
                         onError: onUploadError

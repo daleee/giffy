@@ -9,6 +9,9 @@
 
     <div>
         <h2>Latest GIFs</h2>
+        <div ng-show="!gifList.length">
+            No GIFs have been uploaded.
+        </div>
         <ul class="giflist">
             <li class="giflist-item" ng-repeat="gif in gifList | limitTo: 5">
                 <a ng-href="/#gifs/{{ gif.name }}">

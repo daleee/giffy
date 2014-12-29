@@ -40,6 +40,7 @@ if ('development' === env) {
     app.use(morgan('combined'));
 }
 app.use(express.static('public'));
+app.use('/bower_components', express.static(__dirname + '/public/bower_components'));
 app.use(cookieParser());
 app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());

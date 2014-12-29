@@ -1,6 +1,6 @@
 angular.module('giffy')
-    .controller('GifCreatorCtrl', ['$scope', 'S3Service',
-        function($scope, S3Service) {
+    .controller('GifCreatorCtrl', ['$scope', 'S3Service', 'CONFIG',
+        function($scope, S3Service, CONFIG) {
             navigator.getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
             $scope.canvas = null;
@@ -100,7 +100,7 @@ angular.module('giffy')
                 var s3upload = new S3Upload({
                     blobMode: true,
                     blob: $scope.gifBlob,
-                    s3_sign_put_url: 'http://localhost:8080/api/sign_s3',
+                    s3_sign_put_url: CONFIG.apiEndpoint + '/sign_s3',
                     onFinishS3Put: onUploadFinish
                 });
             };
