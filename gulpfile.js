@@ -25,13 +25,13 @@ gulp.task('browser-sync', function () {
 });
 
 gulp.task('build', function () {
-    return gulp.src('./public/index.html')
+    return gulp.src('./public/views/index.html')
         .pipe(usemin({
             css: [minifyCss(), 'concat'],
-            //html: [minifyHtml({empty: true})],
+            html: [minifyHtml({empty: true})],
             js: [uglify(), rev()]
         }))
-        .pipe(gulp.dest('./public/build/'));
+        .pipe(gulp.dest('./public/'));
 });
 
 gulp.task('dev', ['browser-sync']);
