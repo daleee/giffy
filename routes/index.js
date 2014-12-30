@@ -288,7 +288,7 @@ module.exports = function(deps, models, awsOptions){
         if (req.session && req.session.user) {
             req.user = req.session.user;
         }
-        //res.sendfile('./public/index.html');
+        res.sendfile('./public/index.html');
     });
 
     server.use('/api', apiRouter);
