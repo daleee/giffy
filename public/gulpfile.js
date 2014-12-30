@@ -1,27 +1,37 @@
 'use strict';
 
-var gulp = require('gulp');
 var browserSync = require('browser-sync');
 var reload = browserSync.reload;
+var gulp = require('gulp');
+var usemin = require('gulp-usemin');
+var uglify = require('gulp-uglify');
+var minifyHtml = require('gulp-minify-html');
+var minifyCss = require('gulp-minify-css');
+var rev = require('gulp-rev');
+
 
 gulp.task('browser-sync', function () {
     browserSync({
         server: {
-            baseDir: './'
+            baseDir: './public'
         },
         files: [
-            'index.html',
-            'views/*.html',
-            'style/*.css',
-            'js/**/*.js'
+            './public/index.html',
+            './public/views/*.html',
+            './public/style/*.css',
+            './public/js/**/*.js'
         ]
     });
 });
 
 gulp.task('build', function () {
-    //TODO: jshint
-    //TODO: Ulgify
-    //TODO: Concat.
+    return gulp.src('./public/index.html')
+        .pipe(usemin({
+            css: [minifyCss(), 'concat'],
+            //html: [minifyHtml({empty: true})],
+            js: [uglify(), rev()]
+        }))
+        .pipe(gulp.dest('./public/build/'));
 });
 
 gulp.task('dev', ['browser-sync']);

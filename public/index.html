@@ -45,12 +45,15 @@
 <div ng-view></div>
 
 <!-- 3rd party libraries -->
+<!-- build:js js/lib.js -->
 <script src="lib/s3upload.js"></script>
 <script src="lib/gifjs/gif.js"></script>
 <script src="bower_components/angular/angular.js"></script>
 <script src="bower_components/angular-route/angular-route.js"></script>
 <script src="bower_components/cookies-js/dist/cookies.min.js"></script>
+<!-- endbuild -->
 <!-- app -->
+<!-- build:js1 js/app.js -->
 <script src="js/main.js"></script>
 <script src="js/services/S3Service.js"></script>
 <script src="js/services/ConstantService.js"></script>
@@ -65,5 +68,6 @@
 <script src="js/controllers/LoginCtrl.js"></script>
 <script src="js/controllers/TagResultsCtrl.js"></script>
 <script src="js/controllers/GifCreatorCtrl.js"></script>
+<!-- endbuild -->
 </body>
 </html>
