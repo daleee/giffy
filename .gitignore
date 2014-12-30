@@ -17,3 +17,7 @@ node_modules
 conf/api.js
 conf/aws.js
 conf/db.js
+
+public/index.html
+public/js/app.js
+public/js/lib-*
