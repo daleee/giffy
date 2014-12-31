@@ -20,10 +20,21 @@ Prerequisites
 Installation
 ------------
 1. Clone the directory: `git clone git@github.com:daleee/giffy.git`
-2. Navigate to the `/api/` directory in the terminal and install Node dependencies with `npm install`
-3. Navigate to `/api/conf`, and create local copies of the configuration files: `cp api.js.example api.js && cp aws.js.example aws.js`
-4. Run the API with `node server.js`
+2. Navigate to `/conf`, and create local copies of the configuration files: `cp api.js.example api.js && cp aws.js.example aws.js && cp db.js.example db.js`
+3. Navigate to `/public/js/services` and `ConstantService.js` to point to the URL of your server/API location.
+4. Install dependencies and build static assets:
+```sh
+cd giffy
+npm install
+cd public
+bower install
+cd ../ # back to root of giffy dir
+gulp build
+```
+5. Run the API with `node server.js`
 
 To Do
 -----
+- [ ] Automated install process for install/build steps!
+- [ ] Centralized config for entire application!
 - [ ] Tests!
