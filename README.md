@@ -29,7 +29,8 @@ bower install
 cd ../ # back to root of giffy dir
 gulp build
 ```
-5. Run the API with `node server.js`
+
+Start the application with `node server.js`
 
 To Do
 -----
