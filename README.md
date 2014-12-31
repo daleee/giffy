@@ -23,6 +23,7 @@ Installation
 4. Install dependencies and build static assets:
 ```sh
 pwd # .../giffy
+npm install
 cd public
 bower install
 cd ../ # back to root of giffy dir
