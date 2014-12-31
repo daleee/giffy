@@ -22,8 +22,7 @@ Installation
 3. Navigate to `/public/js/services` and `ConstantService.js` to point to the URL of your server/API location.
 4. Install dependencies and build static assets:
 ```sh
-cd giffy
-npm install
+pwd # .../giffy
 cd public
 bower install
 cd ../ # back to root of giffy dir
