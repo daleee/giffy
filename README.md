@@ -1,7 +1,5 @@
-giffy-api
+giffy
 =========
-
-**WARNING: Still in development! Not ready for production use.**
 
 Prerequisites
 -------------
